@@ -1,0 +1,46 @@
+arg, (
+    iteration: numero di iterazioni
+    tile_size: # tile
+    lgn_path: si ricavano le lgn e nProbes
+    num_pc_wu: num_pc_wu: the number of PC executions for each work unit
+)
+
+subsetSize = tile_size - len(lgnProbes) : numero di elementi da aggiungere in ogni tile, senza considerare i lgn
+allProbes = range(nProbes) : iota : (nProbes = # di geni totale)
+otherProbes = list(set(allProbes) - set (lgnProbes)) : indica di geni eccetto i lgn
+
+work_unit = 1 : ??
+counter = dict() to store frequency
+lst_lst = []
+final_lst = []
+
+per ogni iterazione:
+    shuffle(otherProbes)                                                                :in questo modo non serve fare lo shuffle di tutto!
+    probeBag = list(otherProbes)                                                        :le mette in una lista
+
+    while probeBag != []:                                                               :finche' gli elementi della lista non sono finiti
+        if (len(lst_lst) % num_pc_wu == 0) and lst_lst:                                 :??
+            final_lst.append(...)
+            lst_lst = []
+            work_unit += 1
+
+            subset = probeBag[:subsetSize]                                              :prende il numero giusto di elementi da (tile_size - #lgn)
+            probeBag = probeBag[subsetSize:]                                            :aggiurna la probeBag (toglie gli elementi gia' usati)
+            toAdd = subsetSize - len(subset)                                            := geni mancanti da aggiungere non considerando lgn
+
+            if toAdd > 0:                                                               :solamente "alla fine"
+                extra = list(set(otherProbes).difference(set(subset))):                 :(geni totali - geni lgn) - quelli sia' presi per il tile
+                shuffle(extra)
+                exxtra = extra[:toAdd]                                                  :prende il numero di elementi da aggiungere
+                subset += exxtra                                                        :li aggiunge a tile
+
+                for key in exxtra:                                                      :salva le frequenze
+                    if key in counter:
+                        counter[key] += 1
+                    else:
+                        counter[key] = 1
+
+            subset += lgnProbes                                                         :aggiunge i lgn alla tile
+            shuffle(subset)
+
+
