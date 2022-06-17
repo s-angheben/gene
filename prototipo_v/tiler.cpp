@@ -26,7 +26,7 @@ void vshuffle(vector<int> & v, vector<int>::size_type n, mt19937 & generator) {
 }
 
 int main() {
-  const int v_size = 100;
+  const int v_size = 40000;
   vector<int> v(v_size);
   vector<int> f(v_size);
   vector<int> lgn = {22, 33};

@@ -44,12 +44,16 @@ def simple_pcim (iterations, tile_size, lgn, nProbes, lgnProbes, num_pc_wu):
 #            lst_lst.append(subsetToString(subset))
             print(subset)
 
+        print("FREQUENCIES:")
+        print(counter)
+        counter = dict()
+
 def main():
     iter = 2
     lgn = [22, 33]
     lgn_size = len(lgn)
     tile_size = 30
-    v_size = 100
+    v_size = 40000
               # (iterations, tile_size, lgn, nProbes, lgnProbes, num_pc_wu)
 #    simple_pcim (2, 5, 3, 30, [1,2,3], 1)
     simple_pcim (iter, tile_size, lgn_size, v_size, lgn, 1)

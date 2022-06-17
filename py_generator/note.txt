@@ -15,7 +15,7 @@ lst_lst = []
 final_lst = []
 
 per ogni iterazione:
-    shuffle(otherProbes)                                                                :in questo modo non serve fare lo shuffle di tutto!
+    shuffle(otherProbes)                                                                :primo shuffle di otherProbes
     probeBag = list(otherProbes)                                                        :le mette in una lista
 
     while probeBag != []:                                                               :finche' gli elementi della lista non sono finiti
