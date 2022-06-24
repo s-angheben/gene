@@ -8,6 +8,7 @@ int main() {
     int v_size = 30;
 
     algorithm_pcim algo(iterations, tile_size, v_size, lgn);
+    algo.set_generator(debug_generator);
 
     algo.run();
 
