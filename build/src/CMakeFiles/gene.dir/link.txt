@@ -1,0 +1,1 @@
+/usr/bin/clang++ CMakeFiles/gene.dir/main.cpp.o CMakeFiles/gene.dir/gene_algo.cpp.o -o gene 

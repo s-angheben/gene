@@ -1,0 +1,1 @@
+/usr/bin/clang++ CMakeFiles/gene_test.dir/gene_algo_test.cc.o -o gene_test   -L/home/sam/Documents/gene/src  -Wl,-rpath,/home/sam/Documents/gene/src ../lib/libgtest_main.a ../src/libgene_algo.a ../lib/libgtest.a 

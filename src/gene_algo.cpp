@@ -5,15 +5,6 @@
 #include <iostream>
 #include <ostream>
 
-void vshuffle(std::vector<int> & v, std::vector<int>::size_type n, std::mt19937 & generator) {
-  int max = v.size();
-  for(int i = 0; i < n; i++) {
-    std::uniform_int_distribution<> dis(i, max - 1);
-    int random = dis(generator);
-    std::swap(v[i], v[random]);
-  }
-}
-
 std::ostream& operator<<(std::ostream& os, const std::vector<int>& v) {
     for (auto& elem : v) {
         os << elem << " ";
@@ -21,24 +12,58 @@ std::ostream& operator<<(std::ostream& os, const std::vector<int>& v) {
     return os;
 }
 
+std::mt19937 setup_generator() {
+    // unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+    unsigned seed = 1;
+    std::mt19937 generator(seed);
+    return generator;
+}
+
+void setup_other_probes(std::vector<int>& other_probes, const std::vector<int>& lgn) {
+    iota(other_probes.begin(), other_probes.end(), 0);
+
+    for (int i=0; i != lgn.size(); i++) {
+        std::swap(other_probes[lgn[i]], other_probes[other_probes.size() - i - 1]);
+    }
+    other_probes.erase(other_probes.end() - lgn.size(), other_probes.end());
+}
+
+int tail_to_do(std::vector<int>& other_probes, int subset_size, std::vector<int>& frequency){
+    int tail_number=other_probes.size()/subset_size;
+
+    // add to the end other elements if necessary
+    int available = (other_probes.size() - tail_number * subset_size);
+    if (available) {            // if zero skip
+        int need = subset_size - available;
+        other_probes.insert(other_probes.end(), other_probes.begin(), other_probes.begin()+need);
+
+        // save frequency
+        frequency.insert(frequency.begin(),
+                        other_probes.begin(),
+                        other_probes.begin()+need);
+        tail_number++;
+    }
+
+    return tail_number;
+}
+
+void create_tail(std::vector<int>& tile, int index, const std::vector<int>& other_probes, const std::vector<int>& lgn, int subset_size, std::mt19937 generator) {
+    std::copy(lgn.begin(), lgn.end(), tile.begin());
+    std::copy(other_probes.begin() + (index * subset_size),
+              other_probes.begin() + (index * subset_size + subset_size),
+              tile.begin()+lgn.size());
+    shuffle(tile.begin(), tile.end(), generator);
+}
 
 void pcim(int iterations, int tile_size, int n_total_probes, const std::vector<int>& lgn) {
     auto lgn_size = lgn.size();
     auto subset_size = tile_size - lgn_size;
 
     std::vector<int> other_probes(n_total_probes);
-    iota(other_probes.begin(), other_probes.end(), 0);
+    setup_other_probes(other_probes, lgn);
     std::cout << other_probes << std::endl;
 
-    for (int i=0; i != lgn_size; i++) {
-        std::swap(other_probes[lgn[i]], other_probes[n_total_probes - i - 1]);
-    }
-    other_probes.erase(other_probes.end() - lgn_size, other_probes.end());
-    std::cout << other_probes << std::endl;
-
-    // unsigned seed = chrono::high_resolution_clock::now().time_since_epoch().count();
-    unsigned seed = 1;
-    std::mt19937 generator(seed);
+    std::mt19937 generator = setup_generator();
 
     for (int i=0; i<iterations; i++) {
         std::cout << "ITERATION " << i << std::endl;
@@ -46,40 +71,17 @@ void pcim(int iterations, int tile_size, int n_total_probes, const std::vector<i
         shuffle(other_probes.begin(), other_probes.end(), generator);
         std::cout << other_probes << std::endl;
 
-        int j=0;
-        std::vector<int> tile (tile_size);
-        for (j=0; j<other_probes.size()/subset_size; j++) {
-            std::copy(lgn.begin(), lgn.end(), tile.begin());
-            std::copy(other_probes.begin() + (j * subset_size),
-                      other_probes.begin() + (j * subset_size + subset_size),
-                      tile.begin()+lgn_size);
-            vshuffle(tile, tile_size, generator);
-            std::cout << "TILE" << j << ": " << tile << std::endl;
-        }
-        if (int available = (other_probes.size() - j * subset_size)) {             // if zero skip
-            int need = subset_size - available;
-            std::cout << "missing " << need << std::endl;
-            std::cout << "available " << available << std::endl;
-            std::copy(lgn.begin(), lgn.end(), tile.begin());
-            std::copy(other_probes.begin() + (j * subset_size),
-                      other_probes.end(),
-                      tile.begin()+lgn_size);
+        std::vector<int> tile(tile_size);
 
-            std::copy(other_probes.begin(),                                   //always the beginnig, maybe not random enough
-                      other_probes.begin()+need,
-                      tile.begin()+lgn_size+available);
+        // elements used twice
+        std::vector<int> frequency;
 
-            vshuffle(tile, tile_size, generator);
+        // calculate tail to do
+        int tail_number = tail_to_do(other_probes, subset_size, frequency);
 
-            std::cout << "TILE" << ++j << ": " << tile << std::endl;
-
-            //save the frequency
-            //save the idexes used twice (last copy)
-            std::vector<int> used_twice(need);
-            std::copy(other_probes.begin(),
-                      other_probes.begin()+need,
-                      used_twice.begin());
-            std::cout << "used twice: " << used_twice << std::endl;
+        for (int j=0; j<tail_number; j++) {
+            create_tail(tile, j, other_probes, lgn, subset_size, generator);
+            std::cout << "TILE" << j << ": (#" << tile.size() << ") " << tile << std::endl;
         }
     }
 

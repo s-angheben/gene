@@ -1,0 +1,57 @@
+Start testing: Jun 24 15:05 CEST
+----------------------------------------------------------
+1/2 Testing: ShuffleSize.BasicAssertions
+1/2 Test: ShuffleSize.BasicAssertions
+Command: "/home/sam/Documents/gene/build/test/gene_test" "--gtest_filter=ShuffleSize.BasicAssertions" "--gtest_also_run_disabled_tests"
+Directory: /home/sam/Documents/gene/build/test
+"ShuffleSize.BasicAssertions" start time: Jun 24 15:05 CEST
+Output:
+----------------------------------------------------------
+Running main() from /home/sam/Documents/gene/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = ShuffleSize.BasicAssertions
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ShuffleSize
+[ RUN      ] ShuffleSize.BasicAssertions
+[       OK ] ShuffleSize.BasicAssertions (0 ms)
+[----------] 1 test from ShuffleSize (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"ShuffleSize.BasicAssertions" end time: Jun 24 15:05 CEST
+"ShuffleSize.BasicAssertions" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: tail_to_do_number.BasicAssertions
+2/2 Test: tail_to_do_number.BasicAssertions
+Command: "/home/sam/Documents/gene/build/test/gene_test" "--gtest_filter=tail_to_do_number.BasicAssertions" "--gtest_also_run_disabled_tests"
+Directory: /home/sam/Documents/gene/build/test
+"tail_to_do_number.BasicAssertions" start time: Jun 24 15:05 CEST
+Output:
+----------------------------------------------------------
+Running main() from /home/sam/Documents/gene/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = tail_to_do_number.BasicAssertions
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from tail_to_do_number
+[ RUN      ] tail_to_do_number.BasicAssertions
+[       OK ] tail_to_do_number.BasicAssertions (0 ms)
+[----------] 1 test from tail_to_do_number (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"tail_to_do_number.BasicAssertions" end time: Jun 24 15:05 CEST
+"tail_to_do_number.BasicAssertions" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jun 24 15:05 CEST
