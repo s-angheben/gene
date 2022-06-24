@@ -1,5 +1,0 @@
-if(EXISTS "/home/sam/Documents/gene/build/test/gene_test[1]_tests.cmake")
-  include("/home/sam/Documents/gene/build/test/gene_test[1]_tests.cmake")
-else()
-  add_test(gene_test_NOT_BUILT gene_test_NOT_BUILT)
-endif()

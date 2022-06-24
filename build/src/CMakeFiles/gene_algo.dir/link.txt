@@ -1,2 +1,0 @@
-/usr/bin/ar qc libgene_algo.a CMakeFiles/gene_algo.dir/gene_algo.cpp.o
-/usr/bin/ranlib libgene_algo.a

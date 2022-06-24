@@ -1,5 +1,0 @@
-add_test( ShuffleSize.BasicAssertions /home/sam/Documents/gene/build/test/gene_test [==[--gtest_filter=ShuffleSize.BasicAssertions]==] --gtest_also_run_disabled_tests)
-set_tests_properties( ShuffleSize.BasicAssertions PROPERTIES WORKING_DIRECTORY /home/sam/Documents/gene/build/test SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
-add_test( tail_to_do_number.BasicAssertions /home/sam/Documents/gene/build/test/gene_test [==[--gtest_filter=tail_to_do_number.BasicAssertions]==] --gtest_also_run_disabled_tests)
-set_tests_properties( tail_to_do_number.BasicAssertions PROPERTIES WORKING_DIRECTORY /home/sam/Documents/gene/build/test SKIP_REGULAR_EXPRESSION [==[\[  SKIPPED \]]==])
-set( gene_test_TESTS ShuffleSize.BasicAssertions tail_to_do_number.BasicAssertions)
