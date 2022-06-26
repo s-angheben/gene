@@ -37,33 +37,48 @@ void algorithm_pcim::vector_init() {
         std::swap(other_probes[lgn[i]], other_probes[other_probes.size() - i - 1]);
     }
     other_probes.erase(other_probes.end() - lgn.size(), other_probes.end());
-
-    // add to the end other elements if necessary
-    int available = (other_probes.size() - tile_number * subset_size);
-    if (available) {            // if zero skip
-        int need = subset_size - available;
-        other_probes.insert(other_probes.end(), other_probes.begin(), other_probes.begin()+need);
-
-        frequency.insert(frequency.begin(),
-                        other_probes.begin(),
-                        other_probes.begin()+need);
-    }
 }
 
 void algorithm_pcim::vector_other_probes_shuffle() {
     shuffle(other_probes.begin(), other_probes.end(), generator);
+    iteration_probes.insert(iteration_probes.begin(),
+                            other_probes.begin(),
+                            other_probes.end());
+
+    // add to the end other elements if necessary
+    int to_add = tile_number * subset_size - other_probes.size();
+    if (to_add) {            // if zero skip
+        iteration_probes.insert(iteration_probes.end(), other_probes.begin(), other_probes.begin()+to_add);
+
+        for(auto it=other_probes.begin(); it != other_probes.begin()+to_add; ++it) {
+            frequency[*it] = 2;
+        }
+    }
 }
 
 void algorithm_pcim::vector_tile_creation(int index) {
     std::copy(lgn.begin(), lgn.end(), tile.begin());
-    std::copy(other_probes.begin() + (index * subset_size),
-              other_probes.begin() + (index * subset_size + subset_size),
+    std::copy(iteration_probes.begin() + (index * subset_size),
+              iteration_probes.begin() + (index * subset_size + subset_size),
               tile.begin()+lgn.size());
     shuffle(tile.begin(), tile.end(), generator);
 }
 
 void algorithm_pcim::vector_tile_cout(int index) {
     std::cout << "TILE" << index << ": (#" << tile.size() << ") " << tile << std::endl;
+}
+
+
+void algorithm_pcim::map_cout() {
+    std::cout << "FREQUENCY: ";
+    for (int i=0; i<n_total_probes; i++) {
+        if(frequency[i]) {
+            std::cout << "[" << i << ":" << frequency[i] << "]";
+        } else {
+            std::cout << "[" << i << ":" << 1 << "]";
+        }
+    }
+    std::cout << std::endl;
 }
 
 void algorithm_pcim::calculate_tile_number() {
@@ -117,6 +132,7 @@ int algorithm_pcim::run() {
             (this->*f_tile_creation)(j);
             (this->*f_tile_save)(j);
         }
+        (this->*f_freq_save)();
     }
     return EXIT_SUCCESS;
 }
