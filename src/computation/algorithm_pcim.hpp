@@ -35,7 +35,7 @@ public:
     std::mt19937 (*f_generator)() = &random_generator;
 
     void calculate_tile_number();
-    void map_cout();
+    void freq_cout();
 
     virtual void init() = 0;
     virtual void iteration_init() = 0;

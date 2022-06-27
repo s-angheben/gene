@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(src)
 
+# boost library for parsing
+find_package( Boost REQUIRED COMPONENTS program_options regex )
+include_directories( ${Boost_INCLUDE_DIRS} )
+
 option(ENABLE_TEST "Turn on to enable tests" ON)
 if (ENABLE_TEST)
     include(FetchContent)

@@ -31,7 +31,7 @@ void algorithm_pcim::set_generator (std::mt19937 (*f)()) {
 
 algorithm_pcim::~algorithm_pcim(){}
 
-void algorithm_pcim::map_cout() {
+void algorithm_pcim::freq_cout() {
     std::cout << "FREQUENCY: ";
     for (int i=0; i<n_total_probes; i++) {
         if(frequency[i]) {

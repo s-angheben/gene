@@ -1,6 +1,6 @@
 #include <iostream>
-#include "algorithm_pcim.hpp"
-#include "vector_pcim.hpp"
+#include <algorithm_pcim.hpp>
+#include <vector_pcim.hpp>
 
 int main() {
     int iterations = 2;
@@ -8,10 +8,10 @@ int main() {
     int tile_size = 30;
     int v_size = 40;
 
+    algorithm_pcim* algo = new vector_pcim(iterations, tile_size, v_size, lgn);
 
-    vector_pcim algo(iterations, tile_size, v_size, lgn);
-    algo.set_generator(debug_generator);
-    algo.run();
+    algo->set_generator(debug_generator);
+    algo->run();
 
     return 0;
 }

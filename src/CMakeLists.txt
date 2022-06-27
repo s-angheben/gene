@@ -1,8 +1,12 @@
-add_executable(gene main.cpp algorithm_pcim.hpp algorithm_pcim.cpp vector_pcim.hpp vector_pcim.cpp)
+add_executable(gene main.cpp)
+target_link_directories(gene PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+
+target_include_directories(gene PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+target_link_libraries(gene algorithm_pcim vector_pcim)
 install(TARGETS gene DESTINATION "${PROJECT_SOURCE_DIR}/build/bin")
 
-add_library(algorithm_pcim algorithm_pcim.hpp algorithm_pcim.cpp)
-add_library(vector_pcim vector_pcim.hpp vector_pcim.cpp)
+add_subdirectory(computation)
+add_subdirectory(parsing)
 
 #install(TARGETS gene_algo DESTINATION lib)
 #install(TARGETS gene_algo DESTINATION "${PROJECT_SOURCE_DIR}/build/lib/")

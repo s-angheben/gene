@@ -14,12 +14,12 @@ class vector_pcim : public algorithm_pcim {
     std::vector<int> other_probes;
     std::vector<int> iteration_probes;
 
+public:
     void vector_init();
     void vector_other_probes_shuffle();
     void vector_tile_creation(int index);
     void vector_tile_cout(int index);
 
-public:
     vector_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> &_lgn) :
         algorithm_pcim(_iterations, _tile_size, _n_total_probes, _lgn) {
         }
@@ -30,7 +30,7 @@ public:
     void iteration_init() { vector_other_probes_shuffle(); }
     void tile_creation(int index) { vector_tile_creation(index); }
     void tile_save(int index) { vector_tile_cout(index); }
-    void freq_save() { map_cout(); }
+    void freq_save() { freq_cout(); }
 };
 
 #endif
