@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __ALGO_PCIM__
+#define __ALGO_PCIM__
 
 #include <cstddef>
 #include <random>
@@ -17,9 +18,9 @@ std::mt19937 random_generator();
 // debug generator with seed=1
 std::mt19937 debug_generator();
 
-
-// pcim algorithm class
+// pcim algorithm abstract class
 class algorithm_pcim {
+public:
     int iterations;
     int tile_size;
     int n_total_probes;
@@ -28,27 +29,20 @@ class algorithm_pcim {
     int subset_size;
     int tile_number;
     std::vector<int> tile;
-    std::map<int, int> frequency; //use map
+    std::map<int, int> frequency;
     std::mt19937 generator;
 
-    std::mt19937 (*f_generator)() = random_generator;
-    void (algorithm_pcim::*f_init)() = &algorithm_pcim::vector_init;
-    void (algorithm_pcim::*f_iteration_init)() = &algorithm_pcim::vector_other_probes_shuffle;
-    void (algorithm_pcim::*f_tile_creation)(int) = &algorithm_pcim::vector_tile_creation;
-    void (algorithm_pcim::*f_tile_save)(int) = &algorithm_pcim::vector_tile_cout;
-    void (algorithm_pcim::*f_freq_save)() = &algorithm_pcim::map_cout;
-
-    //vector variable
-    std::vector<int> other_probes;
-    std::vector<int> iteration_probes;
+    std::mt19937 (*f_generator)() = &random_generator;
 
     void calculate_tile_number();
-    void vector_init();
-    void vector_other_probes_shuffle();
-    void vector_tile_creation(int index);
-    void vector_tile_cout(int index);
     void map_cout();
-public:
+
+    virtual void init() = 0;
+    virtual void iteration_init() = 0;
+    virtual void tile_creation(int index) = 0;
+    virtual void tile_save(int index) = 0;
+    virtual void freq_save() = 0;
+
     algorithm_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int>& _lgn):
         lgn(_lgn)
     {
@@ -64,4 +58,6 @@ public:
     void set_generator(std::mt19937 (*f)());
 
     int run();
+    virtual ~algorithm_pcim() = 0;
 };
+#endif
