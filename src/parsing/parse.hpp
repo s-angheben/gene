@@ -16,7 +16,7 @@ using namespace std;
 
 algorithm_pcim * process_command_line(int ac, char* av[])
 {
-    algorithm_pcim* algo;
+    algorithm_pcim* algo = nullptr;
     try {
         int iterations;
         string lgn_string;
@@ -41,7 +41,7 @@ algorithm_pcim * process_command_line(int ac, char* av[])
 
         if (vm.count("help")) {
             cout << desc << "\n";
-            return 0;
+            return nullptr;
         }
 
         po::notify(vm);
@@ -96,9 +96,9 @@ algorithm_pcim * process_command_line(int ac, char* av[])
     }
     catch(...) {
         cerr << "Exception of unknown type!\n";
+        return nullptr;
     }
 
     return algo;
 }
 
-int main() {}

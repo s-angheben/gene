@@ -20,7 +20,7 @@ public:
     void vector_tile_creation(int index);
     void vector_tile_cout(int index);
 
-    vector_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> &_lgn) :
+    vector_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn) :
         algorithm_pcim(_iterations, _tile_size, _n_total_probes, _lgn) {
         }
 

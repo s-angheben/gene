@@ -24,7 +24,7 @@ public:
     int iterations;
     int tile_size;
     int n_total_probes;
-    std::vector<int>& lgn;
+    std::vector<int> lgn;
 
     int subset_size;
     int tile_number;
@@ -43,7 +43,7 @@ public:
     virtual void tile_save(int index) = 0;
     virtual void freq_save() = 0;
 
-    algorithm_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int>& _lgn):
+    algorithm_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn):
         lgn(_lgn)
     {
         iterations = _iterations;

@@ -1,17 +1,21 @@
+#include <cstdlib>
 #include <iostream>
 #include <algorithm_pcim.hpp>
 #include <vector_pcim.hpp>
+#include <parse.hpp>
 
-int main() {
-    int iterations = 2;
-    std::vector<int> lgn {22, 33};
-    int tile_size = 30;
-    int v_size = 40;
+int main(int argc, char **argv) {
 
-    algorithm_pcim* algo = new vector_pcim(iterations, tile_size, v_size, lgn);
+    algorithm_pcim* algo;
+    algo = process_command_line(argc, argv);
 
-    algo->set_generator(debug_generator);
+    if(algo == nullptr) {
+        return EXIT_FAILURE;
+    }
+
     algo->run();
 
-    return 0;
+    delete(algo);
+
+    return EXIT_SUCCESS;
 }
