@@ -61,6 +61,8 @@ int algorithm_pcim::run() {
             tile_save(j);
         }
         freq_save();
+        iteration_end();
     }
+    end();
     return EXIT_SUCCESS;
 }
