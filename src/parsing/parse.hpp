@@ -84,6 +84,10 @@ algorithm_pcim * process_command_line(int ac, char* av[])
  // [vfds vfsi vri]
         if(algo_string == "vfds") {
             algo = new vector_pcim(iterations, tile_size, v_size, lgn);
+        } else if (algo_string == "vfsi") {
+            vector_pcim* algo_tmp = new vector_pcim(iterations, tile_size, v_size, lgn);
+            algo_tmp->f_tile_creation = &vector_pcim::vector_tile_creation_random_insert;
+            algo = algo_tmp;
         } else if (algo_string == "vri") {
             algo = new vector_random_pcim(iterations, tile_size, v_size, lgn);
         } else {
