@@ -17,16 +17,13 @@ void vector_pcim::vector_init() {
     other_probes.erase(other_probes.end() - lgn.size(), other_probes.end());
 }
 
-void vector_pcim::vector_other_probes_shuffle() {
+void vector_pcim::vector_iter_init() {
+    other_probes.resize(n_total_probes - lgn.size());
     shuffle(other_probes.begin(), other_probes.end(), generator);
-    iteration_probes.insert(iteration_probes.begin(),
-                            other_probes.begin(),
-                            other_probes.end());
 
-    // add to the end other elements if necessary
     int to_add = tile_number * subset_size - other_probes.size();
     if (to_add) {            // if zero skip
-        iteration_probes.insert(iteration_probes.end(), other_probes.begin(), other_probes.begin()+to_add);
+        other_probes.insert(other_probes.end(), other_probes.begin(), other_probes.begin()+to_add);
 
         for(auto it=other_probes.begin(); it != other_probes.begin()+to_add; ++it) {
             frequency[*it] = 2;
@@ -36,8 +33,8 @@ void vector_pcim::vector_other_probes_shuffle() {
 
 void vector_pcim::vector_tile_creation(int index) {
     std::copy(lgn.begin(), lgn.end(), tile.begin());
-    std::copy(iteration_probes.begin() + (index * subset_size),
-              iteration_probes.begin() + (index * subset_size + subset_size),
+    std::copy(other_probes.begin() + (index * subset_size),
+              other_probes.begin() + (index * subset_size + subset_size),
               tile.begin()+lgn.size());
     shuffle(tile.begin(), tile.end(), generator);
 }

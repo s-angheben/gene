@@ -77,9 +77,9 @@ algorithm_pcim * process_command_line(int ac, char* av[])
         cout << "lgn size: " << lgn.size() << endl;
         cout << "iterations: " << iterations << endl;
 
-//        algo = new vector_pcim(iterations, tile_size, v_size, lgn);
+        algo = new vector_pcim(iterations, tile_size, v_size, lgn);
 
-        algo = new vector_random_pcim(iterations, tile_size, v_size, lgn);
+//        algo = new vector_random_pcim(iterations, tile_size, v_size, lgn);
 
         if (vm.count("generator")) {
             if(set_generator == "random") {

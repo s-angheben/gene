@@ -31,7 +31,6 @@ void vector_random_pcim::vector_random_iter_init() {
 }
 
 void vector_random_pcim::vector_random_tile_creation(int index) {
-    std::cout << "here" << std::endl;
     tile.resize(subset_size);
 
     std::uniform_int_distribution<int> dist_tile_space(0,tile_size-1);
