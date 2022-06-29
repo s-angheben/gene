@@ -1,2 +1,4 @@
-verificare che gli elementi di lgn siano sempre inferiori di size
-tail_size <= size e tails_size >= lgn.size()
+FREQUENCY: iteration or total
+
+TODO: fix vector_pcim frequency;
+

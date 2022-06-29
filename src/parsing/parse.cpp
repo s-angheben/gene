@@ -11,6 +11,7 @@ namespace qi = boost::spirit::qi;
 
 #include <algorithm_pcim.hpp>
 #include <vector_pcim.hpp>
+#include <vector_pcim_random.hpp>
 
 using namespace std;
 
@@ -88,7 +89,8 @@ algorithm_pcim * process_command_line(int ac, char* av[])
         cout << "lgn size: " << lgn.size() << endl;
         cout << "iterations: " << iterations << endl;
 
-        algo = new vector_pcim(iterations, tile_size, v_size, lgn);
+//        algo = new vector_pcim(iterations, tile_size, v_size, lgn);
+        algo = new vector_pcim_random(iterations, tile_size, v_size, lgn);
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";

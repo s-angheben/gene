@@ -11,6 +11,7 @@ namespace qi = boost::spirit::qi;
 
 #include <algorithm_pcim.hpp>
 #include <vector_pcim.hpp>
+#include <vector_random_pcim.hpp>
 
 using namespace std;
 
@@ -46,18 +47,6 @@ algorithm_pcim * process_command_line(int ac, char* av[])
 
         po::notify(vm);
 
-        if (vm.count("generator")) {
-            if(set_generator == "random") {
-                cout << "random generator" << endl;
-            } else if (set_generator == "debug") {
-                cout << "debug generator" << endl;
-            } else {
-                throw po::validation_error(
-                            po::validation_error::invalid_option_value,
-                            "generator", string(set_generator));
-            }
-        }
-
         auto f = lgn_string.cbegin(), l = lgn_string.cend();
         qi::phrase_parse(f, l, *(qi::int_), qi::space, lgn);
         if (f!=l) {
@@ -88,7 +77,22 @@ algorithm_pcim * process_command_line(int ac, char* av[])
         cout << "lgn size: " << lgn.size() << endl;
         cout << "iterations: " << iterations << endl;
 
-        algo = new vector_pcim(iterations, tile_size, v_size, lgn);
+//        algo = new vector_pcim(iterations, tile_size, v_size, lgn);
+
+        algo = new vector_random_pcim(iterations, tile_size, v_size, lgn);
+
+        if (vm.count("generator")) {
+            if(set_generator == "random") {
+                cout << "random generator" << endl;
+            } else if (set_generator == "debug") {
+                cout << "debug generator" << endl;
+                algo->set_generator(debug_generator);
+            } else {
+                throw po::validation_error(
+                            po::validation_error::invalid_option_value,
+                            "generator", string(set_generator));
+            }
+        }
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";

@@ -37,7 +37,7 @@ void algorithm_pcim::freq_cout() {
         if(frequency[i]) {
             std::cout << "[" << i << ":" << frequency[i] << "]";
         } else {
-            std::cout << "[" << i << ":" << 1 << "]";
+            std::cout << "[" << i << ":" << 0 << "]";
         }
     }
     std::cout << std::endl;

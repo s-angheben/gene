@@ -4,7 +4,7 @@ target_link_directories(gene PUBLIC "${PROJECT_SOURCE_DIR}/src/computation" "${P
 
 target_include_directories(gene PUBLIC "${PROJECT_SOURCE_DIR}/src/computation" "${PROJECT_SOURCE_DIR}/src/parsing")
 
-target_link_libraries(gene algorithm_pcim vector_pcim parser)
+target_link_libraries(gene algorithm_pcim vector_pcim vector_random_pcim parser)
 
 install(TARGETS gene DESTINATION "${PROJECT_SOURCE_DIR}/build/bin")
 

@@ -31,6 +31,8 @@ public:
     void tile_creation(int index) { vector_tile_creation(index); }
     void tile_save(int index) { vector_tile_cout(index); }
     void freq_save() { freq_cout(); }
+//    void tile_save(int index) { }
+//    void freq_save() {  }
 };
 
 #endif
