@@ -20,6 +20,8 @@ public:
     void vector_tile_cout(int index);
     void vector_iter_init();
 
+    void vector_tile_creation_random_insert(int index);
+
     vector_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn) :
         algorithm_pcim(_iterations, _tile_size, _n_total_probes, _lgn) {
         }
@@ -28,7 +30,7 @@ public:
 
     void init() { vector_init(); }
     void iteration_init() { vector_iter_init(); }
-    void tile_creation(int index) { vector_tile_creation(index); }
+    void tile_creation(int index) { vector_tile_creation_random_insert(index); }
     void tile_save(int index) { vector_tile_cout(index); }
     void freq_save() { freq_cout(); }
     void iteration_end() {}

@@ -21,6 +21,7 @@ algorithm_pcim * process_command_line(int ac, char* av[])
     try {
         int iterations;
         string lgn_string;
+        string algo_string;
         std::vector<int> lgn;
         int tile_size;
         int v_size;
@@ -32,6 +33,7 @@ algorithm_pcim * process_command_line(int ac, char* av[])
             ("help,h,h", "produce help message")
             ("generator,g", po::value<string>(&set_generator)->default_value("random"), "set generator [random(seed=clock), debug(seed=1)]")
             ("iterations,i", po::value<int>(&iterations)->default_value(1), "set iterations value, default set to 1")
+            ("algorithm,a", po::value<string>(&algo_string)->default_value("vfds"), "set to vector with double shuffle. [vfds vfsi vri]")
             ("lgn", po::value<string>(&lgn_string)->required(), "set lgn")
             ("tile_size,t", po::value<int>(&tile_size)->required(), "set tile_size")
             ("size,s", po::value<int>(&v_size)->required(), "set total size")
@@ -72,20 +74,27 @@ algorithm_pcim * process_command_line(int ac, char* av[])
         }
 
         cout << "SETTINGS: " << endl;
+        cout << "algorithm: " << algo_string << endl;
+        cout << "generator: " << set_generator << endl;
         cout << "total size: " << v_size << endl;
         cout << "tile size: " << tile_size << endl;
         cout << "lgn size: " << lgn.size() << endl;
         cout << "iterations: " << iterations << endl;
 
-        algo = new vector_pcim(iterations, tile_size, v_size, lgn);
-
-//        algo = new vector_random_pcim(iterations, tile_size, v_size, lgn);
+ // [vfds vfsi vri]
+        if(algo_string == "vfds") {
+            algo = new vector_pcim(iterations, tile_size, v_size, lgn);
+        } else if (algo_string == "vri") {
+            algo = new vector_random_pcim(iterations, tile_size, v_size, lgn);
+        } else {
+            throw po::validation_error(
+                        po::validation_error::invalid_option_value,
+                        "algorithm", string(set_generator));
+        }
 
         if (vm.count("generator")) {
             if(set_generator == "random") {
-                cout << "random generator" << endl;
             } else if (set_generator == "debug") {
-                cout << "debug generator" << endl;
                 algo->set_generator(debug_generator);
             } else {
                 throw po::validation_error(

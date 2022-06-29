@@ -2,3 +2,6 @@ FREQUENCY: iteration or total
 
 TODO: fix vector_pcim frequency;
 
+
+CHECK: list performace: insert lgn in a list container so the there is no need to realocate all the elements that were after position to their new positions.
+

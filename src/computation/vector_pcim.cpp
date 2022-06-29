@@ -7,6 +7,15 @@
 #include "algorithm_pcim.hpp"
 #include "vector_pcim.hpp"
 
+template <class RandomAccessIterator, class URNG>
+  RandomAccessIterator random_it (RandomAccessIterator first, RandomAccessIterator last, URNG&& g)
+{
+    auto i=(last-first)-1;
+    std::uniform_int_distribution<decltype(i)> d(0,i);
+    std::advance(first, d(g));
+    return first;
+}
+
 void vector_pcim::vector_init() {
     other_probes.resize(n_total_probes);
     iota(other_probes.begin(), other_probes.end(), 0);
@@ -37,6 +46,19 @@ void vector_pcim::vector_tile_creation(int index) {
               other_probes.begin() + (index * subset_size + subset_size),
               tile.begin()+lgn.size());
     shuffle(tile.begin(), tile.end(), generator);
+}
+
+void vector_pcim::vector_tile_creation_random_insert(int index) {
+    tile.resize(subset_size);
+
+    std::copy(other_probes.begin() + (index * subset_size),
+              other_probes.begin() + (index * subset_size + subset_size),
+              tile.begin());
+
+    for(int i=0; i<lgn.size(); i++) {
+        auto it = random_it(tile.begin(), tile.end(), generator);
+        tile.insert(it, lgn[i]);
+    }
 }
 
 void vector_pcim::vector_tile_cout(int index) {
