@@ -15,11 +15,16 @@ class vector_pcim : public algorithm_pcim {
 
 public:
     void vector_init();
+
     void vector_other_probes_shuffle();
+
     void vector_tile_creation(int index);
-    void vector_tile_cout(int index);
-    void vector_iter_init();
     void vector_tile_creation_random_insert(int index);
+
+    void vector_tile_cout(int index);
+    void vector_tile_to_file(int index);
+
+    void vector_iter_init();
 
     void (vector_pcim::*f_tile_creation)(int index) = &vector_pcim::vector_tile_creation;
 
@@ -32,7 +37,7 @@ public:
     void init() { vector_init(); }
     void iteration_init() { vector_iter_init(); }
     void tile_creation(int index) { (this->*f_tile_creation)(index); }
-    void tile_save(int index) { vector_tile_cout(index); }
+    void tile_save(int index) { vector_tile_to_file(index); }
     void freq_save() { freq_cout(); }
     void iteration_end() {}
     void end() {}

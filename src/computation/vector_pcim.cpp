@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iostream>
 #include <ostream>
+#include <fstream>
 #include "algorithm_pcim.hpp"
 #include "vector_pcim.hpp"
 
@@ -67,3 +68,9 @@ void vector_pcim::vector_tile_cout(int index) {
     std::cout << "TILE" << index << ": (#" << tile.size() << ") " << tile << std::endl;
 }
 
+void vector_pcim::vector_tile_to_file(int index) {
+    std::ofstream myfile;
+    myfile.open ("example.txt", std::ios_base::app);
+    myfile << tile << std::endl;
+    myfile.close();
+}

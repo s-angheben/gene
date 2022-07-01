@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iostream>
 #include <ostream>
+#include <fstream>
 #include <vector>
 #include <map>
 
@@ -25,6 +26,7 @@ public:
     int tile_size;
     int n_total_probes;
     std::vector<int> lgn;
+    std::ofstream out_file;
 
     int subset_size;
     int tile_number;
@@ -35,6 +37,7 @@ public:
     std::mt19937 (*f_generator)() = &random_generator;
 
     void calculate_tile_number();
+
     void freq_cout();
 
     virtual void init() = 0;

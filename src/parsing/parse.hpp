@@ -30,7 +30,7 @@ algorithm_pcim * process_command_line(int ac, char* av[])
 
         po::options_description desc("Program Usage", 1024, 512);
         desc.add_options()
-            ("help,h,h", "produce help message")
+            ("help,h", "produce help message")
             ("generator,g", po::value<string>(&set_generator)->default_value("random"), "set generator [random(seed=clock), debug(seed=1)]")
             ("iterations,i", po::value<int>(&iterations)->default_value(1), "set iterations value, default set to 1")
             ("algorithm,a", po::value<string>(&algo_string)->default_value("vfds"), "set to vector with double shuffle. [vfds vfsi vri]")
