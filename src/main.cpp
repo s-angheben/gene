@@ -8,17 +8,17 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    algorithm_pcim* algo;
-    algo = process_command_line(argc, argv);
+    algo* a;
+    a = process_command_line(argc, argv);
 
-    if(algo == nullptr) {
+    if(a== nullptr) {
         cout << "error creating the algorithm_pcim" << endl;
         return EXIT_FAILURE;
     }
 
-    algo->run();
+    a->run();
 
-    delete(algo);
+    delete(a);
 
     return EXIT_SUCCESS;
 }

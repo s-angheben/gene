@@ -18,6 +18,8 @@ template <class RandomAccessIterator, class URNG>
 }
 
 void vector_pcim::vector_init() {
+    tile.resize(tile_size);
+    frequency.resize(n_total_probes);
     other_probes.resize(n_total_probes);
     iota(other_probes.begin(), other_probes.end(), 0);
 
@@ -64,13 +66,3 @@ void vector_pcim::vector_tile_creation_random_insert(int index) {
     }
 }
 
-void vector_pcim::vector_tile_cout(int index) {
-    std::cout << "TILE" << index << ": (#" << tile.size() << ") " << tile << std::endl;
-}
-
-void vector_pcim::vector_tile_to_file(int index) {
-    std::ofstream myfile;
-    myfile.open ("example.txt", std::ios_base::app);
-    myfile << tile << std::endl;
-    myfile.close();
-}

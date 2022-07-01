@@ -10,7 +10,8 @@
 #include <map>
 #include "algorithm_pcim.hpp"
 
-class vector_random_pcim : public algorithm_pcim {
+// --------------------------------------tile type----frequency type
+class vector_random_pcim : public algorithm_pcim<vector<int>, vector<int>> {
     std::vector<int> other_probes;
 
 public:
@@ -23,12 +24,10 @@ public:
         algorithm_pcim(_iterations, _tile_size, _n_total_probes, _lgn) {
         }
 
-
+// ALGORITHM
     void init() { vector_random_init(); }
     void iteration_init() { vector_random_iter_init(); }
     void tile_creation(int index) { vector_random_tile_creation(index); }
-    void tile_save(int index) { vector_tile_cout(index); }
-    void freq_save() { freq_cout(); }
     void iteration_end() {}
     void end() {}
 };

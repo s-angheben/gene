@@ -18,6 +18,7 @@ template <class RandomAccessIterator, class URNG>
 }
 
 void vector_random_pcim::vector_random_init() {
+    frequency.resize(n_total_probes);
     other_probes.resize(n_total_probes);
     iota(other_probes.begin(), other_probes.end(), 0);
 
@@ -50,9 +51,5 @@ void vector_random_pcim::vector_random_tile_creation(int index) {
         auto it = random_it(tile.begin(), tile.end(), generator);
         tile.insert(it, lgn[i]);
     }
-}
-
-void vector_random_pcim::vector_tile_cout(int index) {
-    std::cout << "TILE" << index << ": (#" << tile.size() << ") " << tile << std::endl;
 }
 

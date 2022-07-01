@@ -1,50 +1,104 @@
 #ifndef __ALGO_PCIM__
 #define __ALGO_PCIM__
 
-#include <cstddef>
+#include <ranges>
+#include <fstream>
 #include <random>
 #include <chrono>
 #include <iostream>
-#include <ostream>
-#include <fstream>
-#include <vector>
-#include <map>
 
-// cout vector definition
-std::ostream& operator<<(std::ostream& os, const std::vector<int>& v);
+namespace ch = std::chrono;
 
-// initialize random generator
-std::mt19937 random_generator();
+using namespace std;
 
-// debug generator with seed=1
-std::mt19937 debug_generator();
-
-// pcim algorithm abstract class
-class algorithm_pcim {
+// wrapper function to be able to have a pointer to all possible implementation of the algorithm
+class algo {
 public:
+    virtual int run() = 0;
+};
+
+template<ranges::common_range T1, ranges::common_range T2>
+class algorithm_pcim : public algo {
+    void calculate_tile_number() {
+        tile_number=(n_total_probes-lgn.size())/subset_size;
+        int available = (n_total_probes - lgn.size() - tile_number * subset_size);
+        if (available) {            // if zero skip
+            tile_number++;
+        }
+    }
+    void tile_cout(int index) {
+        cout << "TILE" << index << ":";
+        for(const auto& item : tile) cout << item << ",";
+        cout << endl;
+    }
+    void freq_cout() {
+        cout << "FREQUENCY: ";
+        for (int i=0; i<n_total_probes; i++) {
+            if(frequency[i]) {
+                cout << "[" << i << ":" << frequency[i] << "]";
+            } else {
+                cout << "[" << i << ":" << 0 << "]";
+            }
+        }
+        cout << endl;
+    }
+    void tile_to_file(int index) {
+        out_file << "TILE" << index << ":";
+        for(const auto& item : tile) out_file << item << ",";
+        out_file << endl;
+    }
+    void freq_to_file() {
+        out_file << "FREQUENCY: ";
+        for (int i=0; i<n_total_probes; i++) {
+            if(frequency[i]) {
+                out_file << "[" << i << ":" << frequency[i] << "]";
+            } else {
+                out_file << "[" << i << ":" << 0 << "]";
+            }
+        }
+        out_file << endl;
+    }
+public:
+// INPUT
     int iterations;
     int tile_size;
     int n_total_probes;
-    std::vector<int> lgn;
-    std::ofstream out_file;
+    T1 lgn;
 
+// INTERNAL VARIABLES
     int subset_size;
     int tile_number;
-    std::vector<int> tile;
-    std::map<int, int> frequency;
     std::mt19937 generator;
+    ofstream out_file;
+    void (algorithm_pcim::*f_save_tile)(int index) = &algorithm_pcim::tile_cout;
+    void (algorithm_pcim::*f_save_freq)() = &algorithm_pcim::freq_cout;
 
-    std::mt19937 (*f_generator)() = &random_generator;
+// OUTPUT
+    T1 tile;
+    T2 frequency;
 
-    void calculate_tile_number();
+// POSSIBLE CONFIG FUNCTIONS
+    void set_random_generator() {
+        unsigned seed = ch::high_resolution_clock::now().time_since_epoch().count();
+        generator.seed(seed);
+    }
+    void set_debug_generator() {
+        unsigned seed = 1;
+        generator.seed(seed);
+    }
+    void set_custom_generator(seed_seq seed) {
+        generator.seed(seed);
+    }
+    void set_tile_cout() { f_save_tile = &algorithm_pcim::tile_cout; }
+    void set_freq_cout() { f_save_freq = &algorithm_pcim::freq_cout; }
+    void set_tile_to_file(string fp) { out_file.open (fp, ios::out | ios::app); f_save_tile = &algorithm_pcim::tile_to_file; }
+    void set_freq_to_file(string fp) { out_file.open (fp, ios::out | ios::app); f_save_freq = &algorithm_pcim::tile_to_file; }
 
-    void freq_cout();
 
+// VIRTUAL FUNCTIONS
     virtual void init() = 0;
     virtual void iteration_init() = 0;
     virtual void tile_creation(int index) = 0;
-    virtual void tile_save(int index) = 0;
-    virtual void freq_save() = 0;
     virtual void iteration_end() = 0;
     virtual void end() = 0;
 
@@ -56,13 +110,27 @@ public:
         n_total_probes = _n_total_probes;
 
         subset_size = tile_size - lgn.size();
-        tile.resize(tile_size);
+        tile.resize(tile_size); //to check
         calculate_tile_number();
     }
 
-    void set_generator(std::mt19937 (*f)());
-
-    int run();
-    virtual ~algorithm_pcim() = 0;
+    int run() {
+        init();
+        for (int i=0; i<iterations; i++) {
+            iteration_init();
+            for (int j=0; j<tile_number; j++) {
+                tile_creation(j);
+                (this->*f_save_tile)(j);
+            }
+            (this->*f_save_freq)();
+            iteration_end();
+        }
+        end();
+        return EXIT_SUCCESS;
+    }
+    ~algorithm_pcim() {
+        if(out_file) out_file.close();
+    }
 };
+
 #endif

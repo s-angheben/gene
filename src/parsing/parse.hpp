@@ -15,9 +15,9 @@ namespace qi = boost::spirit::qi;
 
 using namespace std;
 
-algorithm_pcim * process_command_line(int ac, char* av[])
+algo * process_command_line(int ac, char* av[])
 {
-    algorithm_pcim* algo = nullptr;
+    algo* algo = nullptr;
     try {
         int iterations;
         string lgn_string;
@@ -86,16 +86,18 @@ algorithm_pcim * process_command_line(int ac, char* av[])
             algo = new vector_pcim(iterations, tile_size, v_size, lgn);
         } else if (algo_string == "vfsi") {
             vector_pcim* algo_tmp = new vector_pcim(iterations, tile_size, v_size, lgn);
-            algo_tmp->f_tile_creation = &vector_pcim::vector_tile_creation_random_insert;
+            algo_tmp->set_tile_creation_lgn_insert();
+            algo_tmp->set_tile_to_file("example.txt");
             algo = algo_tmp;
         } else if (algo_string == "vri") {
-            algo = new vector_random_pcim(iterations, tile_size, v_size, lgn);
+            auto* algo_tmp = new vector_random_pcim(iterations, tile_size, v_size, lgn);
+            algo = algo_tmp;
         } else {
             throw po::validation_error(
                         po::validation_error::invalid_option_value,
                         "algorithm", string(set_generator));
         }
-
+/*
         if (vm.count("generator")) {
             if(set_generator == "random") {
             } else if (set_generator == "debug") {
@@ -106,6 +108,7 @@ algorithm_pcim * process_command_line(int ac, char* av[])
                             "generator", string(set_generator));
             }
         }
+*/
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";
