@@ -1,8 +1,8 @@
 FREQUENCY: iteration or total
 
 TODO:
- - fix vector_pcim frequency;
- - move operation on tile (cout and to file) to the abstract class
+ - fix frequency;
+ - add config struct and factory
 
 CHECK: list performace: insert lgn in a list container so the there is no need to realocate all the elements that were after position to their new positions.
 

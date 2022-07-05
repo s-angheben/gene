@@ -27,6 +27,7 @@ algo * process_command_line(int ac, char* av[])
         int v_size;
 
         string set_generator;
+        string output_file;
 
         po::options_description desc("Program Usage", 1024, 512);
         desc.add_options()
@@ -37,6 +38,7 @@ algo * process_command_line(int ac, char* av[])
             ("lgn", po::value<string>(&lgn_string)->required(), "set lgn")
             ("tile_size,t", po::value<int>(&tile_size)->required(), "set tile_size")
             ("size,s", po::value<int>(&v_size)->required(), "set total size")
+            ("output_file,o", po::value<string>(&output_file), "set output_file")
         ;
 
         po::variables_map vm;
@@ -87,7 +89,11 @@ algo * process_command_line(int ac, char* av[])
         } else if (algo_string == "vfsi") {
             vector_pcim* algo_tmp = new vector_pcim(iterations, tile_size, v_size, lgn);
             algo_tmp->set_tile_creation_lgn_insert();
-            algo_tmp->set_tile_to_file("example.txt");
+            if (!output_file.empty()) {
+                algo_tmp->set_fp(output_file);
+                algo_tmp->set_tile_to_file();
+                algo_tmp->set_freq_to_file();
+            }
             algo = algo_tmp;
         } else if (algo_string == "vri") {
             auto* algo_tmp = new vector_random_pcim(iterations, tile_size, v_size, lgn);

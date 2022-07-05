@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
     algo* a;
     a = process_command_line(argc, argv);
 
-    if(a== nullptr) {
+    if(a == nullptr) {
         cout << "error creating the algorithm_pcim" << endl;
         return EXIT_FAILURE;
     }

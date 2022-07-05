@@ -91,8 +91,9 @@ public:
     }
     void set_tile_cout() { f_save_tile = &algorithm_pcim::tile_cout; }
     void set_freq_cout() { f_save_freq = &algorithm_pcim::freq_cout; }
-    void set_tile_to_file(string fp) { out_file.open (fp, ios::out | ios::app); f_save_tile = &algorithm_pcim::tile_to_file; }
-    void set_freq_to_file(string fp) { out_file.open (fp, ios::out | ios::app); f_save_freq = &algorithm_pcim::tile_to_file; }
+    void set_fp(string fp) { out_file.open (fp, ios::out | ios::app); }
+    void set_tile_to_file() { f_save_tile = &algorithm_pcim::tile_to_file; }
+    void set_freq_to_file() { f_save_freq = &algorithm_pcim::freq_to_file; }
 
 
 // VIRTUAL FUNCTIONS
