@@ -9,7 +9,10 @@ using namespace std;
 int main(int argc, char **argv) {
 
     algo* a;
-    a = process_command_line(argc, argv);
+    Algo_config* config;
+    config = process_command_line(argc, argv);
+    
+    a = create_algo(config);
 
     if(a == nullptr) {
         cout << "error creating the algorithm_pcim" << endl;
@@ -18,6 +21,7 @@ int main(int argc, char **argv) {
 
     a->run();
 
+    delete(config);
     delete(a);
 
     return EXIT_SUCCESS;

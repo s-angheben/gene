@@ -14,6 +14,21 @@ using namespace std;
 // wrapper function to be able to have a pointer to all possible implementation of the algorithm
 class algo {
 public:
+
+    virtual void set_random_generator() = 0;
+    virtual void set_debug_generator() = 0;
+    virtual void set_custom_generator(seed_seq seed) = 0;
+
+    virtual void set_tile_cout() = 0;
+    virtual void set_freq_cout() = 0;
+    virtual void set_seed_cout() = 0;
+
+    virtual void set_fp(string fp) = 0;
+    virtual void set_tile_to_file() = 0;
+    virtual void set_freq_to_file() = 0;
+    virtual void set_seed_to_file() = 0;
+
+
     virtual int run() = 0;
 };
 
@@ -42,6 +57,9 @@ class algorithm_pcim : public algo {
         }
         cout << endl;
     }
+    void seed_cout() {
+        cout << "SEED: " << seed;
+    }
     void tile_to_file(int index) {
         out_file << "TILE" << index << ":";
         for(const auto& item : tile) out_file << item << ",";
@@ -58,6 +76,9 @@ class algorithm_pcim : public algo {
         }
         out_file << endl;
     }
+    void seed_to_file() {
+        out_file << "SEED:" << seed << endl;
+    }
 public:
 // INPUT
     int iterations;
@@ -68,10 +89,12 @@ public:
 // INTERNAL VARIABLES
     int subset_size;
     int tile_number;
+    unsigned seed;
     std::mt19937 generator;
     ofstream out_file;
     void (algorithm_pcim::*f_save_tile)(int index) = &algorithm_pcim::tile_cout;
     void (algorithm_pcim::*f_save_freq)() = &algorithm_pcim::freq_cout;
+    void (algorithm_pcim::*f_save_seed)() = &algorithm_pcim::seed_cout;
 
 // OUTPUT
     T1 tile;
@@ -79,11 +102,11 @@ public:
 
 // POSSIBLE CONFIG FUNCTIONS
     void set_random_generator() {
-        unsigned seed = ch::high_resolution_clock::now().time_since_epoch().count();
+        seed = ch::high_resolution_clock::now().time_since_epoch().count();
         generator.seed(seed);
     }
     void set_debug_generator() {
-        unsigned seed = 1;
+        seed = 1;
         generator.seed(seed);
     }
     void set_custom_generator(seed_seq seed) {
@@ -91,9 +114,11 @@ public:
     }
     void set_tile_cout() { f_save_tile = &algorithm_pcim::tile_cout; }
     void set_freq_cout() { f_save_freq = &algorithm_pcim::freq_cout; }
+    void set_seed_cout() { f_save_seed = &algorithm_pcim::seed_cout; }
     void set_fp(string fp) { out_file.open (fp, ios::out | ios::app); }
     void set_tile_to_file() { f_save_tile = &algorithm_pcim::tile_to_file; }
     void set_freq_to_file() { f_save_freq = &algorithm_pcim::freq_to_file; }
+    void set_seed_to_file() { f_save_seed = &algorithm_pcim::seed_to_file; }
 
 
 // VIRTUAL FUNCTIONS
@@ -126,6 +151,7 @@ public:
             (this->*f_save_freq)();
             iteration_end();
         }
+        (this->*f_save_seed)();
         end();
         return EXIT_SUCCESS;
     }
