@@ -17,17 +17,15 @@ public:
 
     virtual void set_random_generator() = 0;
     virtual void set_debug_generator() = 0;
-    virtual void set_custom_generator(seed_seq seed) = 0;
+    virtual void set_custom_generator(unsigned seed) = 0;
 
     virtual void set_tile_cout() = 0;
     virtual void set_freq_cout() = 0;
     virtual void set_seed_cout() = 0;
 
-    virtual void set_fp(string fp) = 0;
-    virtual void set_tile_to_file() = 0;
-    virtual void set_freq_to_file() = 0;
-    virtual void set_seed_to_file() = 0;
-
+    virtual void set_tile_to_file(string fp) = 0;
+    virtual void set_freq_to_file(string fp) = 0;
+    virtual void set_seed_to_file(string fp) = 0;
 
     virtual int run() = 0;
 };
@@ -61,23 +59,23 @@ class algorithm_pcim : public algo {
         cout << "SEED: " << seed;
     }
     void tile_to_file(int index) {
-        out_file << "TILE" << index << ":";
-        for(const auto& item : tile) out_file << item << ",";
-        out_file << endl;
+        tile_out_file << "TILE" << index << ":";
+        for(const auto& item : tile) tile_out_file << item << ",";
+        tile_out_file << endl;
     }
     void freq_to_file() {
-        out_file << "FREQUENCY: ";
+        freq_out_file << "FREQUENCY: ";
         for (int i=0; i<n_total_probes; i++) {
             if(frequency[i]) {
-                out_file << "[" << i << ":" << frequency[i] << "]";
+                freq_out_file << "[" << i << ":" << frequency[i] << "]";
             } else {
-                out_file << "[" << i << ":" << 0 << "]";
+                freq_out_file << "[" << i << ":" << 0 << "]";
             }
         }
-        out_file << endl;
+        freq_out_file << endl;
     }
     void seed_to_file() {
-        out_file << "SEED:" << seed << endl;
+        seed_out_file << "SEED:" << seed << endl;
     }
 public:
 // INPUT
@@ -91,7 +89,9 @@ public:
     int tile_number;
     unsigned seed;
     std::mt19937 generator;
-    ofstream out_file;
+    ofstream tile_out_file;
+    ofstream freq_out_file;
+    ofstream seed_out_file;
     void (algorithm_pcim::*f_save_tile)(int index) = &algorithm_pcim::tile_cout;
     void (algorithm_pcim::*f_save_freq)() = &algorithm_pcim::freq_cout;
     void (algorithm_pcim::*f_save_seed)() = &algorithm_pcim::seed_cout;
@@ -109,16 +109,16 @@ public:
         seed = 1;
         generator.seed(seed);
     }
-    void set_custom_generator(seed_seq seed) {
+    void set_custom_generator(unsigned _seed) {
+        seed = _seed;
         generator.seed(seed);
     }
     void set_tile_cout() { f_save_tile = &algorithm_pcim::tile_cout; }
     void set_freq_cout() { f_save_freq = &algorithm_pcim::freq_cout; }
     void set_seed_cout() { f_save_seed = &algorithm_pcim::seed_cout; }
-    void set_fp(string fp) { out_file.open (fp, ios::out | ios::app); }
-    void set_tile_to_file() { f_save_tile = &algorithm_pcim::tile_to_file; }
-    void set_freq_to_file() { f_save_freq = &algorithm_pcim::freq_to_file; }
-    void set_seed_to_file() { f_save_seed = &algorithm_pcim::seed_to_file; }
+    void set_tile_to_file(string fp) { tile_out_file.open (fp, ios::out | ios::app); f_save_tile = &algorithm_pcim::tile_to_file; }
+    void set_freq_to_file(string fp) { freq_out_file.open (fp, ios::out | ios::app); f_save_freq = &algorithm_pcim::freq_to_file; }
+    void set_seed_to_file(string fp) { seed_out_file.open (fp, ios::out | ios::app); f_save_seed = &algorithm_pcim::seed_to_file; }
 
 
 // VIRTUAL FUNCTIONS
@@ -156,7 +156,9 @@ public:
         return EXIT_SUCCESS;
     }
     ~algorithm_pcim() {
-        if(out_file) out_file.close();
+        if(tile_out_file) tile_out_file.close();
+        if(freq_out_file) freq_out_file.close();
+        if(seed_out_file) seed_out_file.close();
     }
 };
 

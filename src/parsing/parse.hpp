@@ -39,7 +39,12 @@ typedef struct Algo_config {
     int v_size;
     Algo_type algo_type;
     Gener_type gener_type;
-    string output_file;
+
+    unsigned seed;
+
+    string tile_output_file;
+    string freq_output_file;
+    string seed_output_file;
 } Algo_config;
 
 algo * create_algo(Algo_config* config);
@@ -62,7 +67,10 @@ Algo_config * process_command_line(int ac, char* av[])
             ("lgn", po::value<string>(&lgn_string)->required(), "set lgn")
             ("tile_size,t", po::value<int>(&config->tile_size)->required(), "set tile_size")
             ("size,s", po::value<int>(&config->v_size)->required(), "set total size")
-            ("output_file,o", po::value<string>(&config->output_file)->default_value(""), "set output_file")
+            ("seed", po::value<unsigned>(&config->seed)->default_value(0), "set seed for custom generator")
+            ("tile_out,tout", po::value<string>(&config->tile_output_file)->default_value(""), "set tile_output_file")
+            ("freq_out,fout", po::value<string>(&config->freq_output_file)->default_value(""), "set freq_output_file")
+            ("seed_out,sout", po::value<string>(&config->seed_output_file)->default_value(""), "set seed_output_file")
         ;
 
         po::variables_map vm;
@@ -87,6 +95,9 @@ Algo_config * process_command_line(int ac, char* av[])
             throw po::error("invalid generator");
         } else {
             config->gener_type = gener_type_map.at(gener_string);
+        }
+        if (gener_string == "custom" && config->seed == 0) {
+            throw po::error("custom generator selected but no seed provided");
         }
 
         // set lgn
@@ -160,17 +171,20 @@ algo * create_algo(Algo_config* config) {
         algo->set_debug_generator();
         break;
     case gcustom:
-    //    algo->set_custom_generator(4);
+        algo->set_custom_generator(config->seed);
         break;
     default:
         break;
     }
 
-    if (!config->output_file.empty()) {
-        algo->set_fp(config->output_file);
-        algo->set_tile_to_file();
-        algo->set_freq_to_file();
-        algo->set_seed_to_file();
+    if (!config->tile_output_file.empty()) {
+        algo->set_tile_to_file(config->tile_output_file);
+    }
+    if (!config->freq_output_file.empty()) {
+        algo->set_freq_to_file(config->freq_output_file);
+    }
+    if (!config->seed_output_file.empty()) {
+        algo->set_seed_to_file(config->seed_output_file);
     }
 
     return algo;

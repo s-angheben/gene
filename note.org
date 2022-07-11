@@ -2,12 +2,9 @@ FREQUENCY: iteration or total
 
 TODO:
  - fix frequency;
- - save seed
- - add config struct and factory
  - add concepts constrains on frequency
- - save seed
- - wrapper master class
  - config file
+ - open files operation
 
 tofix:
  - config enum
