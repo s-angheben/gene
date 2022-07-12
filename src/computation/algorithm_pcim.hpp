@@ -40,7 +40,7 @@ class algorithm_pcim : public algo {
         }
     }
     void tile_cout(int index) {
-        cout << "TILE" << index << ":";
+        cout << "GROUP:" << current_wus << ", TILE" << index << ":";
         for(const auto& item : tile) cout << item << ",";
         cout << endl;
     }
@@ -62,6 +62,7 @@ class algorithm_pcim : public algo {
         tile_out_file << "TILE" << index << ":";
         for(const auto& item : tile) tile_out_file << item << ",";
         tile_out_file << endl;
+        tile_out_file << std::flush;
     }
     void freq_to_file() {
         freq_out_file << "FREQUENCY: ";
@@ -82,11 +83,16 @@ public:
     int iterations;
     int tile_size;
     int n_total_probes;
+    int npc;
     T1 lgn;
 
 // INTERNAL VARIABLES
     int subset_size;
     int tile_number;
+
+    string tile_name_fp;
+    int current_wus;
+
     unsigned seed;
     std::mt19937 generator;
     ofstream tile_out_file;
@@ -116,7 +122,11 @@ public:
     void set_tile_cout() { f_save_tile = &algorithm_pcim::tile_cout; }
     void set_freq_cout() { f_save_freq = &algorithm_pcim::freq_cout; }
     void set_seed_cout() { f_save_seed = &algorithm_pcim::seed_cout; }
-    void set_tile_to_file(string fp) { tile_out_file.open (fp, ios::out | ios::app); f_save_tile = &algorithm_pcim::tile_to_file; }
+    void set_tile_to_file(string fp) {
+        tile_name_fp=fp;
+        tile_out_file.open (tile_name_fp+to_string(current_wus)+".txt", ios::out | ios::app);
+        f_save_tile = &algorithm_pcim::tile_to_file;
+    }
     void set_freq_to_file(string fp) { freq_out_file.open (fp, ios::out | ios::app); f_save_freq = &algorithm_pcim::freq_to_file; }
     void set_seed_to_file(string fp) { seed_out_file.open (fp, ios::out | ios::app); f_save_seed = &algorithm_pcim::seed_to_file; }
 
@@ -128,12 +138,18 @@ public:
     virtual void iteration_end() = 0;
     virtual void end() = 0;
 
-    algorithm_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn):
+    algorithm_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn, int _npc):
         lgn(_lgn)
     {
         iterations = _iterations;
         tile_size = _tile_size;
         n_total_probes = _n_total_probes;
+        if (_npc == 0) {
+            npc = 2147483647; //MAXINT
+        } else {
+            npc = _npc;
+        }
+        current_wus = 1;
 
         subset_size = tile_size - lgn.size();
         tile.resize(tile_size); //to check
@@ -142,11 +158,23 @@ public:
 
     int run() {
         init();
+        int counter = 0;
         for (int i=0; i<iterations; i++) {
             iteration_init();
             for (int j=0; j<tile_number; j++) {
                 tile_creation(j);
-                (this->*f_save_tile)(j);
+                (this->*f_save_tile)(counter+npc*(current_wus-1));
+                counter++;
+                if (counter > npc) {
+                    // close previus file
+                    tile_out_file.close();
+
+                    counter = 0;
+                    current_wus++;
+
+                    //open next file
+                    tile_out_file.open (tile_name_fp+to_string(current_wus)+".txt", ios::out | ios::app);
+                }
             }
             (this->*f_save_freq)();
             iteration_end();

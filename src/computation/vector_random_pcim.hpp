@@ -19,10 +19,12 @@ public:
     void vector_random_iter_init();
     void vector_random_tile_creation(int index);
     void vector_tile_cout(int index);
-
+/*
     vector_random_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn) :
         algorithm_pcim(_iterations, _tile_size, _n_total_probes, _lgn) {
         }
+*/
+    using algorithm_pcim::algorithm_pcim; // use the default constructor
 
 // ALGORITHM
     void init() { vector_random_init(); }

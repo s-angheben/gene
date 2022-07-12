@@ -11,7 +11,12 @@ int main(int argc, char **argv) {
     algo* a;
     Algo_config* config;
     config = process_command_line(argc, argv);
-    
+
+    if (config == nullptr) {
+        cout << "error parsing the configurations" << endl;
+        return EXIT_FAILURE;
+    }
+
     a = create_algo(config);
 
     if(a == nullptr) {

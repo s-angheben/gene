@@ -37,6 +37,7 @@ typedef struct Algo_config {
     std::vector<int> lgn;
     int tile_size;
     int v_size;
+    int npc;
     Algo_type algo_type;
     Gener_type gener_type;
 
@@ -63,6 +64,7 @@ Algo_config * process_command_line(int ac, char* av[])
             ("help,h", "produce help message")
             ("generator,g", po::value<string>(&gener_string)->default_value("random"), "set generator [random(seed=clock), debug(seed=1)]")
             ("iterations,i", po::value<int>(&config->iterations)->default_value(1), "set iterations value, default set to 1")
+            ("npc,n", po::value<int>(&config->npc)->default_value(0), "specify npc, default set to 0")
             ("algorithm,a", po::value<string>(&algo_string)->default_value("vfds"), "set to vector with double shuffle. [vfds vfsi vri]")
             ("lgn", po::value<string>(&lgn_string)->required(), "set lgn")
             ("tile_size,t", po::value<int>(&config->tile_size)->required(), "set tile_size")
@@ -152,13 +154,13 @@ algo * create_algo(Algo_config* config) {
     // set algorithm
     auto algo_type = config->algo_type;
     if(algo_type == vfds) {
-        algo = new vector_pcim(config->iterations, config->tile_size, config->v_size, config->lgn);
+        algo = new vector_pcim(config->iterations, config->tile_size, config->v_size, config->lgn, config->npc);
     } else if (algo_type == vfsi) {
-        auto algo_tmp = new vector_pcim(config->iterations, config->tile_size, config->v_size, config->lgn);
+        auto algo_tmp = new vector_pcim(config->iterations, config->tile_size, config->v_size, config->lgn, config->npc);
         algo_tmp->set_tile_creation_lgn_insert();
         algo = algo_tmp;
     } else if (algo_type == vri) {
-        algo = new vector_random_pcim(config->iterations, config->tile_size, config->v_size, config->lgn);
+        algo = new vector_random_pcim(config->iterations, config->tile_size, config->v_size, config->lgn, config->npc);
     }
 
     // set generator

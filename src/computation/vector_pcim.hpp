@@ -29,11 +29,12 @@ public:
     void set_tile_creation_lgn_shuffle () { f_tile_creation=&vector_pcim::vector_tile_creation; }
     void set_tile_creation_lgn_insert () { f_tile_creation=&vector_pcim::vector_tile_creation_random_insert; }
 
-
+/*
     vector_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn) :
         algorithm_pcim(_iterations, _tile_size, _n_total_probes, _lgn) {
         }
-//    using algorithm_pcim::algorithm_pcim; // use the default constructor
+*/
+    using algorithm_pcim::algorithm_pcim; // use the default constructor
 
 // ALGORITHM
     void init() { vector_init(); }
