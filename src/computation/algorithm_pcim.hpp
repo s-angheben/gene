@@ -91,7 +91,9 @@ public:
     int tile_number;
 
     string tile_name_fp;
+
     int current_wus;
+    int counter;
 
     unsigned seed;
     std::mt19937 generator;
@@ -156,25 +158,36 @@ public:
         calculate_tile_number();
     }
 
+    void increase_state () {
+        counter++;
+        if (counter > npc) {
+            counter = 0;
+            current_wus++;
+
+            if (tile_out_file.is_open()) {
+                // close previus file
+                tile_out_file.close();
+
+                //open next file
+                tile_out_file.open (tile_name_fp+to_string(current_wus)+".txt", ios::out | ios::app);
+            }
+        }
+    }
+
+    void init_state () {
+        counter = 0;
+        current_wus = 1;
+    }
+
     int run() {
         init();
-        int counter = 0;
+        init_state();
         for (int i=0; i<iterations; i++) {
             iteration_init();
             for (int j=0; j<tile_number; j++) {
                 tile_creation(j);
                 (this->*f_save_tile)(counter+npc*(current_wus-1));
-                counter++;
-                if (counter > npc) {
-                    // close previus file
-                    tile_out_file.close();
-
-                    counter = 0;
-                    current_wus++;
-
-                    //open next file
-                    tile_out_file.open (tile_name_fp+to_string(current_wus)+".txt", ios::out | ios::app);
-                }
+                increase_state();
             }
             (this->*f_save_freq)();
             iteration_end();
