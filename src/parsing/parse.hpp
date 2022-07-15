@@ -64,13 +64,13 @@ Algo_config * process_command_line(int ac, char* av[])
             ("help,h", "produce help message")
             ("generator,g", po::value<string>(&gener_string)->default_value("random"), "set generator [random(seed=clock), debug(seed=1)]")
             ("iterations,i", po::value<int>(&config->iterations)->default_value(1), "set iterations value, default set to 1")
-            ("npc,n", po::value<int>(&config->npc)->default_value(0), "specify npc, default set to 0")
+          ("npc,n", po::value<int>(&config->npc)->required(), "specify npc")
             ("algorithm,a", po::value<string>(&algo_string)->default_value("vfds"), "set to vector with double shuffle. [vfds vfsi vri]")
             ("lgn", po::value<string>(&lgn_string)->required(), "set lgn")
             ("tile_size,t", po::value<int>(&config->tile_size)->required(), "set tile_size")
             ("size,s", po::value<int>(&config->v_size)->required(), "set total size")
             ("seed", po::value<unsigned>(&config->seed)->default_value(0), "set seed for custom generator")
-            ("tile_out,tout", po::value<string>(&config->tile_output_file)->default_value(""), "set tile_output_file")
+          ("tile_out,tout", po::value<string>(&config->tile_output_file)->required(), "set tile_output_file prefix")
             ("freq_out,fout", po::value<string>(&config->freq_output_file)->default_value(""), "set freq_output_file")
             ("seed_out,sout", po::value<string>(&config->seed_output_file)->default_value(""), "set seed_output_file")
         ;
@@ -154,13 +154,18 @@ algo * create_algo(Algo_config* config) {
     // set algorithm
     auto algo_type = config->algo_type;
     if(algo_type == vfds) {
-        algo = new vector_pcim(config->iterations, config->tile_size, config->v_size, config->lgn, config->npc);
+      algo = new vector_pcim(config->iterations, config->tile_size, config->v_size,
+                             config->lgn, config->npc, config->tile_output_file);
     } else if (algo_type == vfsi) {
-        auto algo_tmp = new vector_pcim(config->iterations, config->tile_size, config->v_size, config->lgn, config->npc);
-        algo_tmp->set_tile_creation_lgn_insert();
-        algo = algo_tmp;
+      auto algo_tmp =
+          new vector_pcim(config->iterations, config->tile_size, config->v_size,
+                          config->lgn, config->npc, config->tile_output_file);
+      algo_tmp->set_tile_creation_lgn_insert();
+      algo = algo_tmp;
     } else if (algo_type == vri) {
-        algo = new vector_random_pcim(config->iterations, config->tile_size, config->v_size, config->lgn, config->npc);
+      algo = new vector_random_pcim(config->iterations, config->tile_size,
+                                    config->v_size, config->lgn, config->npc,
+                                    config->tile_output_file);
     }
 
     // set generator
@@ -179,9 +184,11 @@ algo * create_algo(Algo_config* config) {
         break;
     }
 
+    /*
     if (!config->tile_output_file.empty()) {
         algo->set_tile_to_file(config->tile_output_file);
     }
+    */
     if (!config->freq_output_file.empty()) {
         algo->set_freq_to_file(config->freq_output_file);
     }
