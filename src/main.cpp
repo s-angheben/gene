@@ -8,8 +8,8 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    algo* a;
-    Algo_config* config;
+    unique_ptr<algo> a;
+    unique_ptr<Algo_config> config;
     config = process_command_line(argc, argv);
 
     if (config == nullptr) {
@@ -17,17 +17,14 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    a = create_algo(config);
+    a = (move (create_algo(config)));
 
     if(a == nullptr) {
         cout << "error creating the algorithm_pcim" << endl;
         return EXIT_FAILURE;
     }
 
-    a->run();
-
-    delete(config);
-    delete(a);
+    //    a->run();
 
     return EXIT_SUCCESS;
 }

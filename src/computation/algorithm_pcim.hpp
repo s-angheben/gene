@@ -12,13 +12,13 @@
 namespace ch = std::chrono;
 
 using namespace std;
-
+/*
 template <ranges::common_range T1>
 class bulk {
 public:
-  vector<T1*> data;
+  vector<unique_ptr<T1>> data;
 
-  vector<T1*> out;
+  vector<unique_ptr<T1>> out;
   future<bool> data_writing;
   ofstream tile_out_file;
 
@@ -31,23 +31,23 @@ public:
     file_prefix = _file_prefix;
     size = _size;
     data.resize(size);
-    out.resize(size, nullptr);
-    data_writing = async([this]() { return print_and_clear(); });
+    out.resize(size);
 
     bulk_counter = 0;
     bulk_position = 0;
+
+    data_writing = async([this]() { return print_and_clear(); });
   }
 
-  void insert(T1* _tile) {
-    data[bulk_position] = _tile;
+  void insert(unique_ptr<T1> _tile) {
+    data[bulk_position] = move(_tile);
     if (bulk_position < size - 1) {
       bulk_position++;
     } else {
       bool already_written = data_writing.get();
-      tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out | ios::app);
-      if(already_written) {
-        out.swap(data);
-        data_writing = async([this]() { return print_and_clear(); });
+      tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out |
+ios::app); if(already_written) { out.swap(data); data_writing = async([this]() {
+return print_and_clear(); });
       }
       bulk_counter++;
       bulk_position = 0;
@@ -55,7 +55,7 @@ public:
   }
 
   bool print_and_clear() {
-    if (out[0] == nullptr) return true;
+    if (bulk_position) return true;
 
     int i = 0;
     tile_out_file << "bulk: " << bulk_counter;
@@ -66,8 +66,6 @@ public:
         for (auto& elem : *v) {
           tile_out_file << elem << " ";
         }
-        delete(v);
-        v = nullptr;
       }
       i++;
     }
@@ -79,9 +77,76 @@ public:
 
   ~bulk() {
     bool already_written = data_writing.get();
-    tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out | ios::app);
-    print_and_clear();
-    if(tile_out_file.is_open()) tile_out_file.close();
+    tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out |
+ios::app); print_and_clear(); if(tile_out_file.is_open()) tile_out_file.close();
+  }
+};
+*/
+
+template <ranges::common_range T1>
+class bulk {
+public:
+  vector<unique_ptr<T1>> data;
+
+  vector<unique_ptr<T1>> out;
+  future<bool> data_writing;
+  ofstream tile_out_file;
+
+  int bulk_counter;
+  int size;
+  string file_prefix;
+
+  bulk (int _size, string _file_prefix) {
+    file_prefix = _file_prefix;
+    size = _size;
+    //    data.resize(size);
+    //out.resize(0);
+
+    bulk_counter = 0;
+
+    data_writing = async([this]() { return print_and_clear(); });
+  }
+
+  void insert(unique_ptr<T1> _tile) {
+    data.push_back(move(_tile));
+    if (data.size() >= size) {
+      bool already_written = data_writing.get();
+      tile_out_file.close();
+      tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt",
+                         ios::out | ios::app);
+      if(already_written) {
+        out.swap(data);
+        data_writing = async([this]() { return print_and_clear(); });
+      }
+      bulk_counter++;
+    }
+  }
+
+  bool print_and_clear() {
+    if (out.size() == 0) return true;
+
+    int i = 0;
+    tile_out_file << "bulk: " << bulk_counter;
+    for (auto& v : out) {
+      if (v != nullptr) {
+        tile_out_file << endl;
+        tile_out_file << i << ": ";
+        for (auto& elem : *v) {
+          tile_out_file << elem << " ";
+        }
+      }
+      i++;
+    }
+    tile_out_file << endl;
+    //    tile_out_file.close();
+
+    return true;
+  }
+
+  ~bulk() {
+    bool already_written = data_writing.get();
+    tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out |
+ios::app); print_and_clear(); if(tile_out_file.is_open()) tile_out_file.close();
   }
 };
 
@@ -167,7 +232,7 @@ public:
   void (algorithm_pcim::*f_save_seed)() = &algorithm_pcim::seed_cout;
 
   // OUTPUT
-  T1 tile;
+  unique_ptr<T1> tile_ptr;
   T2 frequency;
 
   // POSSIBLE CONFIG FUNCTIONS
@@ -210,7 +275,6 @@ public:
     n_total_probes = _n_total_probes;
 
     subset_size = tile_size - lgn.size();
-    tile.resize(tile_size); //to check
     calculate_tile_number();
   }
 
@@ -221,9 +285,7 @@ public:
       iteration_init();
       for (int j=0; j<tile_number; j++) {
         tile_creation(j);
-
-        T1* tile_tmp = new T1(tile);
-        bulk_tile.insert(tile_tmp);
+        bulk_tile.insert(move(tile_ptr));
       }
       iteration_end();
     }

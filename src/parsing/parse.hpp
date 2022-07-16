@@ -48,11 +48,11 @@ typedef struct Algo_config {
     string seed_output_file;
 } Algo_config;
 
-algo * create_algo(Algo_config* config);
+unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config);
 
-Algo_config * process_command_line(int ac, char* av[])
+unique_ptr<Algo_config> process_command_line(int ac, char* av[])
 {
-    Algo_config* config = new Algo_config;
+  unique_ptr<Algo_config> config (make_unique<Algo_config>());
     try {
         string lgn_string;
         string algo_string;
@@ -148,24 +148,26 @@ Algo_config * process_command_line(int ac, char* av[])
     return config;
 }
 
-algo * create_algo(Algo_config* config) {
-    algo* algo;
+unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config) {
+    unique_ptr<algo> algo;
 
     // set algorithm
     auto algo_type = config->algo_type;
     if(algo_type == vfds) {
-      algo = new vector_pcim(config->iterations, config->tile_size, config->v_size,
-                             config->lgn, config->npc, config->tile_output_file);
+      algo = make_unique<vector_pcim>(config->iterations, config->tile_size,
+                                      config->v_size, config->lgn,
+                                      config->npc, config->tile_output_file);
+
     } else if (algo_type == vfsi) {
-      auto algo_tmp =
-          new vector_pcim(config->iterations, config->tile_size, config->v_size,
-                          config->lgn, config->npc, config->tile_output_file);
+      unique_ptr<vector_pcim> algo_tmp (make_unique<vector_pcim>
+                                       (config->iterations, config->tile_size,
+    config->v_size, config->lgn, config->npc, config->tile_output_file));
       algo_tmp->set_tile_creation_lgn_insert();
-      algo = algo_tmp;
+      algo = move(algo_tmp);
     } else if (algo_type == vri) {
-      algo = new vector_random_pcim(config->iterations, config->tile_size,
-                                    config->v_size, config->lgn, config->npc,
-                                    config->tile_output_file);
+      algo = make_unique<vector_random_pcim>(config->iterations,
+    config->tile_size, config->v_size, config->lgn, config->npc,
+                                             config->tile_output_file);
     }
 
     // set generator
@@ -184,11 +186,6 @@ algo * create_algo(Algo_config* config) {
         break;
     }
 
-    /*
-    if (!config->tile_output_file.empty()) {
-        algo->set_tile_to_file(config->tile_output_file);
-    }
-    */
     if (!config->freq_output_file.empty()) {
         algo->set_freq_to_file(config->freq_output_file);
     }

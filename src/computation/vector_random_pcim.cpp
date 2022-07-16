@@ -32,14 +32,14 @@ void vector_random_pcim::vector_random_iter_init() {
 }
 
 void vector_random_pcim::vector_random_tile_creation(int index) {
-    tile.resize(subset_size);
+    tile_ptr = make_unique<vector<int>>(subset_size);
 
     std::uniform_int_distribution<int> dist_tile_space(0,tile_size-1);
     std::uniform_int_distribution<int> dist_other_probes_space(0, other_probes.size()-1);
 
     for(int i=0; i<subset_size; i++) {
         int value = *random_it(other_probes.begin(), other_probes.end(), generator);
-        tile[i] = value;
+        (*tile_ptr)[i] = value;
 
         if(frequency[value]) {
             frequency[value] += 1;
@@ -48,8 +48,8 @@ void vector_random_pcim::vector_random_tile_creation(int index) {
         }
     }
     for(int i=0; i<lgn.size(); i++) {
-        auto it = random_it(tile.begin(), tile.end(), generator);
-        tile.insert(it, lgn[i]);
+        auto it = random_it(tile_ptr->begin(), tile_ptr->end(), generator);
+        tile_ptr->insert(it, lgn[i]);
     }
 }
 
