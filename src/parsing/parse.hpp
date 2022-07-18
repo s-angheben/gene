@@ -149,32 +149,32 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
 }
 
 unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config) {
-    unique_ptr<algo> algo;
+  unique_ptr<algo> algo;
 
-    // set algorithm
-    auto algo_type = config->algo_type;
-    if(algo_type == vfds) {
-      algo = make_unique<vector_pcim>(config->iterations, config->tile_size,
-                                      config->v_size, config->lgn,
-                                      config->npc, config->tile_output_file);
+  // set algorithm
+  auto algo_type = config->algo_type;
+  if(algo_type == vfds) {
+    algo = make_unique<vector_pcim>(config->iterations, config->tile_size,
+                                    config->v_size, config->lgn,
+                                    config->npc, config->tile_output_file);
 
-    } else if (algo_type == vfsi) {
-      unique_ptr<vector_pcim> algo_tmp (make_unique<vector_pcim>
-                                       (config->iterations, config->tile_size,
-    config->v_size, config->lgn, config->npc, config->tile_output_file));
-      algo_tmp->set_tile_creation_lgn_insert();
-      algo = move(algo_tmp);
-    } else if (algo_type == vri) {
-      algo = make_unique<vector_random_pcim>(config->iterations,
-    config->tile_size, config->v_size, config->lgn, config->npc,
-                                             config->tile_output_file);
-    }
+  } else if (algo_type == vfsi) {
+    unique_ptr<vector_pcim> algo_tmp (make_unique<vector_pcim>
+                                      (config->iterations, config->tile_size,
+                                       config->v_size, config->lgn, config->npc, config->tile_output_file));
+    algo_tmp->set_tile_creation_lgn_insert();
+    algo = move(algo_tmp);
+  } else if (algo_type == vri) {
+    algo = make_unique<vector_random_pcim>(config->iterations,
+                                           config->tile_size, config->v_size, config->lgn, config->npc,
+                                           config->tile_output_file);
+  }
 
-    // set generator
-    switch (config->gener_type)
+  // set generator
+  switch (config->gener_type)
     {
     case grandom:
-        algo->set_random_generator();
+      algo->set_random_generator();
         break;
     case gdebug:
         algo->set_debug_generator();

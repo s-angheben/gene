@@ -45,7 +45,7 @@ void vector_pcim::vector_iter_init() {
 void vector_pcim::vector_tile_creation(int index) {
   //    std::cout << "vector bucket creation" << std::endl;
   //  tile_ptr = new vector<int> (tile_size);
-  tile_ptr = make_unique<vector<int>>(tile_size);
+  tile_ptr = make_unique<vector<int>> (tile_size);
 
   std::copy(lgn.begin(), lgn.end(), tile_ptr->begin());
   std::copy(other_probes.begin() + (index * subset_size),
@@ -56,7 +56,7 @@ void vector_pcim::vector_tile_creation(int index) {
 
 void vector_pcim::vector_tile_creation_random_insert(int index) {
   //    std::cout << "vector random insert" << std::endl;
-  tile_ptr = make_unique<vector<int>>(tile_size);
+  tile_ptr = make_unique<vector<int>>(subset_size);
 
   std::copy(other_probes.begin() + (index * subset_size),
             other_probes.begin() + (index * subset_size + subset_size),

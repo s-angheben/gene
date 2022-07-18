@@ -12,76 +12,6 @@
 namespace ch = std::chrono;
 
 using namespace std;
-/*
-template <ranges::common_range T1>
-class bulk {
-public:
-  vector<unique_ptr<T1>> data;
-
-  vector<unique_ptr<T1>> out;
-  future<bool> data_writing;
-  ofstream tile_out_file;
-
-  int bulk_position; //next position
-  int bulk_counter;
-  int size;
-  string file_prefix;
-
-  bulk (int _size, string _file_prefix) {
-    file_prefix = _file_prefix;
-    size = _size;
-    data.resize(size);
-    out.resize(size);
-
-    bulk_counter = 0;
-    bulk_position = 0;
-
-    data_writing = async([this]() { return print_and_clear(); });
-  }
-
-  void insert(unique_ptr<T1> _tile) {
-    data[bulk_position] = move(_tile);
-    if (bulk_position < size - 1) {
-      bulk_position++;
-    } else {
-      bool already_written = data_writing.get();
-      tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out |
-ios::app); if(already_written) { out.swap(data); data_writing = async([this]() {
-return print_and_clear(); });
-      }
-      bulk_counter++;
-      bulk_position = 0;
-    }
-  }
-
-  bool print_and_clear() {
-    if (bulk_position) return true;
-
-    int i = 0;
-    tile_out_file << "bulk: " << bulk_counter;
-    for (auto& v : out) {
-      if (v != nullptr) {
-        tile_out_file << endl;
-        tile_out_file << i << ": ";
-        for (auto& elem : *v) {
-          tile_out_file << elem << " ";
-        }
-      }
-      i++;
-    }
-    tile_out_file << endl;
-    tile_out_file.close();
-
-    return true;
-  }
-
-  ~bulk() {
-    bool already_written = data_writing.get();
-    tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out |
-ios::app); print_and_clear(); if(tile_out_file.is_open()) tile_out_file.close();
-  }
-};
-*/
 
 template <ranges::common_range T1>
 class bulk {
@@ -111,7 +41,6 @@ public:
     data.push_back(move(_tile));
     if (data.size() >= size) {
       bool already_written = data_writing.get();
-      tile_out_file.close();
       tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt",
                          ios::out | ios::app);
       if(already_written) {
@@ -138,7 +67,7 @@ public:
       i++;
     }
     tile_out_file << endl;
-    //    tile_out_file.close();
+    tile_out_file.close();
 
     return true;
   }
