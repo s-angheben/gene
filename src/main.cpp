@@ -17,14 +17,14 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    a = (move (create_algo(config)));
+    a = (move(create_algo(config)));
 
     if(a == nullptr) {
         cout << "error creating the algorithm_pcim" << endl;
         return EXIT_FAILURE;
     }
 
-    //    a->run();
+    a->run();
 
     return EXIT_SUCCESS;
 }

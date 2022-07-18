@@ -224,8 +224,8 @@ public:
     return EXIT_SUCCESS;
   }
   ~algorithm_pcim() {
-    if(freq_out_file) freq_out_file.close();
-    if(seed_out_file) seed_out_file.close();
+    if(freq_out_file.is_open()) freq_out_file.close();
+    if(seed_out_file.is_open()) seed_out_file.close();
   }
 };
 
