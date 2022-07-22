@@ -54,20 +54,16 @@ public:
   bool print_and_clear() {
     if (out.size() == 0) return true;
 
-    int i = 0;
-    tile_out_file << "bulk: " << bulk_counter;
     for (auto& v : out) {
       if (v != nullptr) {
-        tile_out_file << endl;
-        tile_out_file << i << ": ";
         for (auto& elem : *v) {
           tile_out_file << elem << " ";
         }
       }
-      i++;
     }
-    out.resize(0);
     tile_out_file << endl;
+
+    out.resize(0);
     tile_out_file.close();
 
     return true;
