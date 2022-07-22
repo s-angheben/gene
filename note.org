@@ -5,7 +5,12 @@ TODO:
  - add concepts constrains on frequency
  - config file
  - open files operation
- - random insert (not use insert but swap)
+ - fix tilesize = 1
+ - update bulk (indexes, smart pointer destruction/resize)
+
+idee:
+ - insert with custom probability
+ - update the toAdd
 
 tofix:
  - config enum

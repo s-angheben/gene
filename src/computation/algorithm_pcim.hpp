@@ -32,7 +32,7 @@ public:
     //    data.resize(size);
     //out.resize(0);
 
-    bulk_counter = 0;
+    bulk_counter = 1;
 
     data_writing = async([this]() { return print_and_clear(); });
   }
@@ -66,6 +66,7 @@ public:
       }
       i++;
     }
+    out.resize(0);
     tile_out_file << endl;
     tile_out_file.close();
 
@@ -75,7 +76,10 @@ public:
   ~bulk() {
     bool already_written = data_writing.get();
     tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out |
-ios::app); print_and_clear(); if(tile_out_file.is_open()) tile_out_file.close();
+                       ios::app);
+    out.swap(data);
+    print_and_clear();
+    if(tile_out_file.is_open()) tile_out_file.close();
   }
 };
 
@@ -96,10 +100,13 @@ public:
   virtual void set_seed_to_file(string fp) = 0;
 
   virtual int run() = 0;
+
+  virtual ~algo() = 0;
 };
 
 template<ranges::common_range T1, ranges::common_range T2>
 class algorithm_pcim : public algo {
+
   void calculate_tile_number() {
     tile_number=(n_total_probes-lgn.size())/subset_size;
     int available = (n_total_probes - lgn.size() - tile_number * subset_size);

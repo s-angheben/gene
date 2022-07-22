@@ -135,6 +135,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
         cout << "tile size: " << config->tile_size << endl;
         cout << "lgn size: " << config->lgn.size() << endl;
         cout << "iterations: " << config->iterations << endl << endl;
+        cout << "npc: " << config->npc << endl << endl;
     }
     catch(exception& e) {
         cerr << "error: " << e.what() << "\n";
