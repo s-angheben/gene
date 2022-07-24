@@ -22,7 +22,7 @@ void vector_pcim::vector_init() {
   other_probes.resize(n_total_probes);
   iota(other_probes.begin(), other_probes.end(), 0);
 
-  for (int i=0; i != lgn.size(); i++) {
+  for (long unsigned int i=0; i != lgn.size(); i++) {
     std::swap(other_probes[lgn[i]], other_probes[other_probes.size() - i - 1]);
   }
   other_probes.erase(other_probes.end() - lgn.size(), other_probes.end());
@@ -62,7 +62,7 @@ void vector_pcim::vector_tile_creation_random_insert(int index) {
             other_probes.begin() + (index * subset_size + subset_size),
             tile_ptr->begin());
 
-  for(int i=0; i<lgn.size(); i++) {
+  for (long unsigned int i = 0; i < lgn.size(); i++) {
     auto it = random_it(tile_ptr->begin(), tile_ptr->end(), generator);
     tile_ptr->insert(it, lgn[i]);
   }

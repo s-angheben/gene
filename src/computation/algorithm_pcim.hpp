@@ -6,78 +6,14 @@
 #include <random>
 #include <chrono>
 #include <iostream>
-
 #include <future>
+
+#include "writer.hpp"
 
 namespace ch = std::chrono;
 
 using namespace std;
 
-template <ranges::common_range T1>
-class bulk {
-public:
-  vector<unique_ptr<T1>> data;
-
-  vector<unique_ptr<T1>> out;
-  future<bool> data_writing;
-  ofstream tile_out_file;
-
-  int bulk_counter;
-  int size;
-  string file_prefix;
-
-  bulk (int _size, string _file_prefix) {
-    file_prefix = _file_prefix;
-    size = _size;
-    //    data.resize(size);
-    //out.resize(0);
-
-    bulk_counter = 1;
-
-    data_writing = async([this]() { return print_and_clear(); });
-  }
-
-  void insert(unique_ptr<T1> _tile) {
-    data.push_back(move(_tile));
-    if (data.size() >= size) {
-      bool already_written = data_writing.get();
-      tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt",
-                         ios::out | ios::app);
-      if(already_written) {
-        out.swap(data);
-        data_writing = async([this]() { return print_and_clear(); });
-      }
-      bulk_counter++;
-    }
-  }
-
-  bool print_and_clear() {
-    if (out.size() == 0) return true;
-
-    for (auto& v : out) {
-      if (v != nullptr) {
-        for (auto& elem : *v) {
-          tile_out_file << elem << " ";
-        }
-      }
-    }
-    tile_out_file << endl;
-
-    out.resize(0);
-    tile_out_file.close();
-
-    return true;
-  }
-
-  ~bulk() {
-    bool already_written = data_writing.get();
-    tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out |
-                       ios::app);
-    out.swap(data);
-    print_and_clear();
-    if(tile_out_file.is_open()) tile_out_file.close();
-  }
-};
 
 // wrapper function to be able to have a pointer to all possible implementation of the algorithm
 class algo {
@@ -149,7 +85,7 @@ public:
   // INTERNAL VARIABLES
   int subset_size;
   int tile_number;
-  bulk<T1> bulk_tile;
+  unique_ptr<bulk_writer<T1>> bulk_tile;
 
   string tile_name_fp;
 
@@ -159,6 +95,7 @@ public:
 
   ofstream freq_out_file;
   ofstream seed_out_file;
+
 
   void (algorithm_pcim::*f_save_freq)() = &algorithm_pcim::freq_cout;
   void (algorithm_pcim::*f_save_seed)() = &algorithm_pcim::seed_cout;
@@ -199,14 +136,15 @@ public:
   virtual void iteration_end() = 0;
   virtual void end() = 0;
 
-  algorithm_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn, int _npc, string _tile_file_prefix):
-    lgn(_lgn), bulk_tile(_npc, _tile_file_prefix)
+  algorithm_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn, int _npc, string _tile_file_prefix) :
+    lgn(_lgn), bulk_tile(new bulk_to_file_async<T1>(_npc, _tile_file_prefix))
   {
     iterations = _iterations;
     tile_size = _tile_size;
     n_total_probes = _n_total_probes;
+    //    bulk_tile = make_unique<bulk_to_file_async> (_npc, _tile_file_prefix);
 
-    subset_size = tile_size - lgn.size();
+        subset_size = tile_size - lgn.size();
     calculate_tile_number();
   }
 
@@ -217,7 +155,7 @@ public:
       iteration_init();
       for (int j=0; j<tile_number; j++) {
         tile_creation(j);
-        bulk_tile.insert(move(tile_ptr));
+        bulk_tile->insert(move(tile_ptr));
       }
       iteration_end();
     }
