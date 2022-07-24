@@ -90,9 +90,8 @@ TEST(lgnPresenceVfds, BasicAssertions) {
   vector<int> lgn = {2, 5};
   int size = 50;
   int npc = 10;
-  string tile_out = "/tmp/out";
 
-  vector_pcim a(iteration, tile_size, size, lgn, npc, tile_out);
+  vector_pcim a(iteration, tile_size, size, lgn, npc);
 
   bool result = run_algo_contains(a, lgn);
 
@@ -105,9 +104,8 @@ TEST(tileNumberVfds, BasicAssertions) {
   vector<int> lgn = {2, 5};
   int size = 50;
   int npc = 10;
-  string tile_out = "/tmp/out";
 
-  vector_pcim a(iteration, tile_size, size, lgn, npc, tile_out);
+  vector_pcim a(iteration, tile_size, size, lgn, npc);
 
   int to_do = calculate_tile_to_do(iteration, tile_size, lgn.size(), size);
   int done = run_algo_count_tile(a);
@@ -121,9 +119,8 @@ TEST(tileSizeVfds, BasicAssertions) {
   vector<int> lgn = {2, 5};
   int size = 50;
   int npc = 10;
-  string tile_out = "/tmp/out";
 
-  vector_pcim a(iteration, tile_size, size, lgn, npc, tile_out);
+  vector_pcim a(iteration, tile_size, size, lgn, npc);
 
   bool result = run_algo_check_tile_size(a, tile_size);
 
@@ -139,9 +136,8 @@ TEST(lgnPresenceVfsi, BasicAssertions) {
   vector<int> lgn = {2, 5};
   int size = 50;
   int npc = 10;
-  string tile_out = "/tmp/out";
 
-  vector_pcim a(iteration, tile_size, size, lgn, npc, tile_out);
+  vector_pcim a(iteration, tile_size, size, lgn, npc);
   a.set_tile_creation_lgn_insert();
 
   bool result = run_algo_contains(a, lgn);
@@ -155,9 +151,8 @@ TEST(tileNumberVfsi, BasicAssertions) {
   vector<int> lgn = {2, 5};
   int size = 50;
   int npc = 10;
-  string tile_out = "/tmp/out";
 
-  vector_pcim a(iteration, tile_size, size, lgn, npc, tile_out);
+  vector_pcim a(iteration, tile_size, size, lgn, npc);
   a.set_tile_creation_lgn_insert();
 
   int to_do = calculate_tile_to_do(iteration, tile_size, lgn.size(), size);
@@ -172,9 +167,8 @@ TEST(tileSizeVfsi, BasicAssertions) {
   vector<int> lgn = {2, 5};
   int size = 50;
   int npc = 10;
-  string tile_out = "/tmp/out";
 
-  vector_pcim a(iteration, tile_size, size, lgn, npc, tile_out);
+  vector_pcim a(iteration, tile_size, size, lgn, npc);
   a.set_tile_creation_lgn_insert();
 
   bool result = run_algo_check_tile_size(a, tile_size);
@@ -192,9 +186,8 @@ TEST(lgnPresenceVri, BasicAssertions) {
   vector<int> lgn = {2, 5};
   int size = 50;
   int npc = 10;
-  string tile_out = "/tmp/out";
 
-  vector_random_pcim a(iteration, tile_size, size, lgn, npc, tile_out);
+  vector_random_pcim a(iteration, tile_size, size, lgn, npc);
 
   bool result = run_algo_contains(a, lgn);
 
@@ -207,9 +200,8 @@ TEST(tileNumberVri, BasicAssertions) {
   vector<int> lgn = {2, 5};
   int size = 50;
   int npc = 10;
-  string tile_out = "/tmp/out";
 
-  vector_random_pcim a(iteration, tile_size, size, lgn, npc, tile_out);
+  vector_random_pcim a(iteration, tile_size, size, lgn, npc);
 
   int to_do = calculate_tile_to_do(iteration, tile_size, lgn.size(), size);
   int done = run_algo_count_tile(a);
@@ -223,9 +215,8 @@ TEST(tileSizeVri, BasicAssertions) {
   vector<int> lgn = {2, 5};
   int size = 50;
   int npc = 10;
-  string tile_out = "/tmp/out";
 
-  vector_random_pcim a(iteration, tile_size, size, lgn, npc, tile_out);
+  vector_random_pcim a(iteration, tile_size, size, lgn, npc);
 
   bool result = run_algo_check_tile_size(a, tile_size);
 

@@ -117,12 +117,12 @@ public:
     seed = _seed;
     generator.seed(seed);
   }
-  void set_tile_cout() { int a = 3; }
+  void set_tile_cout() { bulk_tile = make_unique<bulk_cout<T1>>(npc); }
   void set_freq_cout() { f_save_freq = &algorithm_pcim::freq_cout; }
   void set_seed_cout() { f_save_seed = &algorithm_pcim::seed_cout; }
 
   void set_tile_to_file(string fp) {
-    int a = 4;
+    bulk_tile = make_unique<bulk_to_file_async<T1>>(npc, fp);
   }
 
   void set_freq_to_file(string fp) { freq_out_file.open (fp, ios::out | ios::app); f_save_freq = &algorithm_pcim::freq_to_file; }
@@ -136,12 +136,13 @@ public:
   virtual void iteration_end() = 0;
   virtual void end() = 0;
 
-  algorithm_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn, int _npc, string _tile_file_prefix) :
-    lgn(_lgn), bulk_tile(new bulk_to_file_async<T1>(_npc, _tile_file_prefix))
+  algorithm_pcim(int _iterations, int _tile_size, int _n_total_probes, std::vector<int> _lgn, int _npc) :
+    lgn(_lgn), bulk_tile(new bulk_cout<T1>(_npc))
   {
     iterations = _iterations;
     tile_size = _tile_size;
     n_total_probes = _n_total_probes;
+    npc = _npc;
     //    bulk_tile = make_unique<bulk_to_file_async> (_npc, _tile_file_prefix);
 
         subset_size = tile_size - lgn.size();
