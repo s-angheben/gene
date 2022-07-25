@@ -34,8 +34,8 @@ template <ranges::common_range T1> bulk_writer<T1>::~bulk_writer() {}
 template <ranges::common_range T1>
 class bulk_cout : public bulk_writer<T1> {
 public:
-  long unsigned int bulk_counter;
   const long unsigned int size;
+  long unsigned int bulk_counter;
 
   bulk_cout (int _size) : size(_size), bulk_counter(1) {}
   void insert (unique_ptr<T1> _tile) {
@@ -114,7 +114,7 @@ public:
   }
 
   ~bulk_to_file_async () {
-    bool already_written = data_writing.get();
+    data_writing.get();
     tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out |
                        ios::app);
     out.swap(this->data);

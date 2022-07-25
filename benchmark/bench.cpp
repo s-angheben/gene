@@ -63,17 +63,17 @@ static void CustomArguments(benchmark::internal::Benchmark * b) {
   }
 }
 
-static void argSizeAndTile_size(benchmark::internal::Benchmark *b) {
-  vector<double> tile_perc {1, 5, 40};
-  for (double size = 8; size <= 400000; size *= 6) {
-    for (auto& x : tile_perc) {
-      double tile_size = size / 100 * x;
-      int size_int = nearbyint(size);
-      int tile_size_int = nearbyint(tile_size);
-      b->Args({size_int, tile_size_int});
-    }
-  }
-}
+// static void argSizeAndTile_size(benchmark::internal::Benchmark *b) {
+//   vector<double> tile_perc {1, 5, 40};
+//   for (double size = 8; size <= 400000; size *= 6) {
+//     for (auto& x : tile_perc) {
+//       double tile_size = size / 100 * x;
+//       int size_int = nearbyint(size);
+//       int tile_size_int = nearbyint(tile_size);
+//       b->Args({size_int, tile_size_int});
+//     }
+//   }
+// }
 // static void argSizeAndTile_size(benchmark::internal::Benchmark *b) {
 //   for (int i = 2; i <= 10; ++i)
 //     for (int j = 32; j <= 1024*1024; j *= 8)
@@ -88,8 +88,8 @@ static void BM_ComputationVfds(benchmark::State & state) {
   for (auto _ : state) {
     state.PauseTiming();
     int iteration = 3;
-    int size = state.range(0);
-    int tile_size = state.range(1);
+    long unsigned int size = state.range(0);
+    long unsigned int tile_size = state.range(1);
     vector<int> lgn = create_lgn_vector(state.range(2));
     int npc = 10;
 
@@ -111,8 +111,8 @@ static void BM_ComputationVfsi(benchmark::State &state) {
   for (auto _ : state) {
     state.PauseTiming();
     int iteration = 3;
-    int size = state.range(0);
-    int tile_size = state.range(1);
+    long unsigned int size = state.range(0);
+    long unsigned int tile_size = state.range(1);
     vector<int> lgn = create_lgn_vector(state.range(2));
     int npc = 10;
 
@@ -134,8 +134,8 @@ static void BM_ComputationVri(benchmark::State & state) {
   for (auto _ : state) {
     state.PauseTiming();
     int iteration = 3;
-    int size = state.range(0);
-    int tile_size = state.range(1);
+    long unsigned int size = state.range(0);
+    long unsigned int tile_size = state.range(1);
     vector<int> lgn = create_lgn_vector(state.range(2));
     int npc = 10;
 

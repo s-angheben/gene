@@ -35,7 +35,7 @@ unordered_map<string,Gener_type> gener_type_map = {
 typedef struct Algo_config {
   int iterations;
   std::vector<int> lgn;
-  int tile_size;
+  long unsigned int tile_size;
   int v_size;
   int npc;
   Algo_type algo_type;
@@ -67,7 +67,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
       ("npc,n", po::value<int>(&config->npc)->required(), "specify npc")
       ("algorithm,a", po::value<string>(&algo_string)->default_value("vfds"), "set to vector with double shuffle. [vfds vfsi vri]")
       ("lgn", po::value<string>(&lgn_string)->required(), "set lgn")
-      ("tile_size,t", po::value<int>(&config->tile_size)->required(), "set tile_size")
+      ("tile_size,t", po::value<long unsigned int>(&config->tile_size)->required(), "set tile_size")
       ("size,s", po::value<int>(&config->v_size)->required(), "set total size")
       ("seed", po::value<unsigned>(&config->seed)->default_value(0), "set seed for custom generator")
       ("tile_out,tout", po::value<string>(&config->tile_output_file)->default_value(""), "set tile_output_file prefix")

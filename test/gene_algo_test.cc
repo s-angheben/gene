@@ -64,7 +64,7 @@ int run_algo_count_tile(algorithm_pcim<T1, T2> &a) {
 
 // check that all the created tile have the same correct size
 template <ranges::common_range T1, ranges::common_range T2>
-int run_algo_check_tile_size(algorithm_pcim<T1, T2> &a, int tile_size) {
+int run_algo_check_tile_size(algorithm_pcim<T1, T2> &a, long unsigned int tile_size) {
   bool result = true;
   a.init();
   for (int i = 0; i < a.iterations; i++) {
