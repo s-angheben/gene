@@ -1,20 +1,9 @@
-FREQUENCY: iteration or total
-
 TODO:
- - fix frequency;
  - add concepts constrains on frequency
  - config file
- - open files operation
- - fix tilesize = 1
- - update bulk (indexes, smart pointer destruction/resize)
 
 idee:
  - insert with custom probability
- - update the toAdd
 
-tofix:
- - config enum
- - config lgn elements repetitions
 
-CHECK: list performace: insert lgn in a list container so the there is no need to realocate all the elements that were after position to their new positions.
 

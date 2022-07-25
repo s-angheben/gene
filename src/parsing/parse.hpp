@@ -17,11 +17,12 @@ namespace qi = boost::spirit::qi;
 using namespace std;
 
 
-enum Algo_type {vfds, vfsi, vri};
-unordered_map<string,Algo_type> alto_type_map = {
-  {"vfds", vfds},
-  {"vfsi", vfsi},
-  {"vri", vri},
+enum Algo_type {vfds, vfsi, vri, vci};
+unordered_map<string, Algo_type> alto_type_map = {
+    {"vfds", vfds},
+    {"vfsi", vfsi},
+    {"vri", vri},
+    {"vci", vci},
 };
 
 enum Gener_type {gdebug, grandom, gcustom};
@@ -41,6 +42,7 @@ typedef struct Algo_config {
   Algo_type algo_type;
   Gener_type gener_type;
 
+  std::vector<int> custom_prob;
   unsigned seed;
 
   string tile_output_file;
@@ -57,6 +59,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
     string lgn_string;
     string algo_string;
     string gener_string;
+    string custom_prob_string;
 
 
     po::options_description desc("Program Usage", 1024, 512);
@@ -65,7 +68,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
       ("generator,g", po::value<string>(&gener_string)->default_value("random"), "set generator [random(seed=clock), debug(seed=1)]")
       ("iterations,i", po::value<int>(&config->iterations)->default_value(1), "set iterations value, default set to 1")
       ("npc,n", po::value<int>(&config->npc)->required(), "specify npc")
-      ("algorithm,a", po::value<string>(&algo_string)->default_value("vfds"), "set to vector with double shuffle. [vfds vfsi vri]")
+      ("algorithm,a", po::value<string>(&algo_string)->default_value("vfds"), "set to vector with double shuffle. [vfds vfsi vri vci]")
       ("lgn", po::value<string>(&lgn_string)->required(), "set lgn")
       ("tile_size,t", po::value<long unsigned int>(&config->tile_size)->required(), "set tile_size")
       ("size,s", po::value<int>(&config->v_size)->required(), "set total size")
@@ -73,6 +76,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
       ("tile_out,tout", po::value<string>(&config->tile_output_file)->default_value(""), "set tile_output_file prefix")
       ("freq_out,fout", po::value<string>(&config->freq_output_file)->default_value(""), "set freq_output_file")
       ("seed_out,sout", po::value<string>(&config->seed_output_file)->default_value(""), "set seed_output_file")
+      ("custom_prob,c", po::value<string>(&custom_prob_string), "set custom probability for vci")
       ;
 
     po::variables_map vm;
@@ -129,6 +133,23 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
       throw po::error("tile_size < lgn_size()");
     }
 
+    // read custom prob
+    auto first_i = custom_prob_string.cbegin(), last_i = custom_prob_string.cend();
+    qi::phrase_parse(first_i, last_i, *(qi::int_), qi::space, config->custom_prob);
+    if (first_i != last_i) {
+      std::cout << "Unparsed input '" << std::string(first_i, last_i) << "'\n";
+      throw po::validation_error(po::validation_error::invalid_option_value,
+                                 "custom_prob", string(first_i, last_i));
+    }
+
+
+    if (config->algo_type == vci) {
+      // check custom_prob sizes
+      if (config->custom_prob.size() != (config->v_size - config->lgn.size())) {
+        throw po::error("v_size - lgn_size != custom_prob.size()");
+      }
+    }
+
     cout << "PARSED CONFIG: " << endl;
     cout << "algorithm: " << config->algo_type << " -> " << algo_string << endl;
     cout << "generator: " << config->gener_type << " -> " << gener_string << endl;
@@ -169,6 +190,12 @@ unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config) {
   } else if (algo_type == vri) {
     algo = make_unique<vector_random_pcim>(config->iterations,
                                            config->tile_size, config->v_size, config->lgn, config->npc);
+  } else if (algo_type == vci) {
+    unique_ptr<vector_random_pcim> algo_tmp = make_unique<vector_random_pcim>(config->iterations,
+                                                                              config->tile_size, config->v_size,
+                                                                              config->lgn, config->npc);
+    algo_tmp->set_custom_probability(config->custom_prob);
+    algo = move(algo_tmp);
   }
 
   // set generator
