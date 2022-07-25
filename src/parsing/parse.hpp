@@ -80,6 +80,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
 
     if (vm.count("help")) {
       cout << desc << "\n";
+      exit(0);
       return nullptr;
     }
 
@@ -124,7 +125,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
     }
 
     // check sizes
-    if (config->tile_size < config->lgn.size()) {
+    if (config->tile_size <= config->lgn.size()) {
       throw po::error("tile_size < lgn_size()");
     }
 
@@ -134,7 +135,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
     cout << "total size: " << config->v_size << endl;
     cout << "tile size: " << config->tile_size << endl;
     cout << "lgn size: " << config->lgn.size() << endl;
-    cout << "iterations: " << config->iterations << endl << endl;
+    cout << "iterations: " << config->iterations << endl;
     cout << "npc: " << config->npc << endl << endl;
   }
   catch(exception& e) {

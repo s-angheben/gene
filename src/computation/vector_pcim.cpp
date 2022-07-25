@@ -18,7 +18,7 @@ RandomAccessIterator random_it (RandomAccessIterator first, RandomAccessIterator
 }
 
 void vector_pcim::vector_init() {
-  frequency.resize(n_total_probes);
+  frequency.resize(n_total_probes, 0);
   other_probes.resize(n_total_probes);
   iota(other_probes.begin(), other_probes.end(), 0);
 
@@ -31,13 +31,16 @@ void vector_pcim::vector_init() {
 void vector_pcim::vector_iter_init() {
   other_probes.resize(n_total_probes - lgn.size());
   shuffle(other_probes.begin(), other_probes.end(), generator);
+  for (auto& elem : other_probes) {
+    frequency[elem] += 1;
+  }
 
   int to_add = tile_number * subset_size - other_probes.size();
   if (to_add) {            // if zero skip
     other_probes.insert(other_probes.end(), other_probes.begin(), other_probes.begin()+to_add);
 
     for(auto it=other_probes.begin(); it != other_probes.begin()+to_add; ++it) {
-      frequency[*it] = 2;
+      frequency[*it] += 1;
     }
   }
 }
@@ -52,6 +55,9 @@ void vector_pcim::vector_tile_creation(int index) {
             other_probes.begin() + (index * subset_size + subset_size),
             tile_ptr->begin()+lgn.size());
   shuffle(tile_ptr->begin(), tile_ptr->end(), generator);
+  for (auto &elem : lgn) {
+    frequency[elem] += 1;
+  }
 }
 
 void vector_pcim::vector_tile_creation_random_insert(int index) {
@@ -65,6 +71,9 @@ void vector_pcim::vector_tile_creation_random_insert(int index) {
   for (long unsigned int i = 0; i < lgn.size(); i++) {
     auto it = random_it(tile_ptr->begin(), tile_ptr->end(), generator);
     tile_ptr->insert(it, lgn[i]);
+  }
+  for (auto &elem : lgn) {
+    frequency[elem] += 1;
   }
 }
 

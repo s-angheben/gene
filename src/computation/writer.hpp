@@ -44,6 +44,7 @@ public:
       bulk_counter++;
     } else {
       print_bulk(this->data, cout);
+      this->data.resize(0);
       bulk_counter = 0;
     }
   }

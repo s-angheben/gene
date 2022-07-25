@@ -145,7 +145,7 @@ public:
     npc = _npc;
     //    bulk_tile = make_unique<bulk_to_file_async> (_npc, _tile_file_prefix);
 
-        subset_size = tile_size - lgn.size();
+    subset_size = tile_size - lgn.size();
     calculate_tile_number();
   }
 
