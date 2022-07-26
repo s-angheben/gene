@@ -2,8 +2,8 @@ TODO:
  - add concepts constrains on frequency
  - config file
 
-idee:
- - insert with custom probability
+
+con vri e vci alcuni indici si possono sovrapporre
 
 
 

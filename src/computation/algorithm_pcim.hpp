@@ -58,7 +58,7 @@ class algorithm_pcim : public algo {
     cout << endl;
   }
   void seed_cout() {
-    cout << "SEED: " << seed;
+    cout << "SEED: " << seed << endl;
   }
   void freq_to_file() {
     freq_out_file << "FREQUENCY: ";

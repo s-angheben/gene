@@ -82,6 +82,9 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
     po::variables_map vm;
     po::store(po::parse_command_line(ac, av, desc), vm);
 
+    ifstream ifs("gene_config.cfg");
+    store(parse_config_file(ifs, desc), vm);
+
     if (vm.count("help")) {
       cout << desc << "\n";
       exit(0);
