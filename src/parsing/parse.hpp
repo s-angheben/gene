@@ -20,12 +20,12 @@ using namespace std;
 
 enum Algo_type {vfds, vfsi, vri, vci, veu, vec};
 unordered_map<string, Algo_type> alto_type_map = {
-    {"vfds", vfds},
-    {"vfsi", vfsi},
-    {"vri", vri},
-    {"vci", vci},
-    {"veu", veu},
-    {"vec", vec},
+  {"vfds", vfds},
+  {"vfsi", vfsi},
+  {"vri", vri},
+  {"vci", vci},
+  {"veu", veu},
+  {"vec", vec},
 
 };
 
@@ -50,6 +50,7 @@ typedef struct Algo_config {
   unsigned seed;
 
   string tile_output_file;
+  string tile_output_file_async;
   string freq_output_file;
   string seed_output_file;
 } Algo_config;
@@ -78,6 +79,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
       ("size,s", po::value<int>(&config->v_size)->required(), "set total size")
       ("seed", po::value<unsigned>(&config->seed)->default_value(0), "set seed for custom generator")
       ("tile_out,tout", po::value<string>(&config->tile_output_file)->default_value(""), "set tile_output_file prefix")
+      ("tile_out_async,toa",  po::value<string>(&config->tile_output_file_async)->default_value(""), "set async writer")
       ("freq_out,fout", po::value<string>(&config->freq_output_file)->default_value(""), "set freq_output_file")
       ("seed_out,sout", po::value<string>(&config->seed_output_file)->default_value(""), "set seed_output_file")
       ("custom_prob,c", po::value<string>(&custom_prob_string), "set custom probability for vci")
@@ -157,9 +159,15 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
       }
     }
 
+    if (!config->tile_output_file.empty() && !config->tile_output_file_async.empty()) {
+      throw po::error("choose async writer OR normal");
+    }
+
     cout << "PARSED CONFIG: " << endl;
-    cout << "algorithm: " << config->algo_type << " -> " << algo_string << endl;
-    cout << "generator: " << config->gener_type << " -> " << gener_string << endl;
+    cout << "algorithm: " << config->algo_type << " -> " << algo_string
+         << endl;
+    cout << "generator: " << config->gener_type << " -> " << gener_string
+         << endl;
     cout << "total size: " << config->v_size << endl;
     cout << "tile size: " << config->tile_size << endl;
     cout << "lgn size: " << config->lgn.size() << endl;
@@ -209,9 +217,9 @@ unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config) {
                                             config->lgn, config->npc);
   } else if (algo_type == vec) {
     unique_ptr<vector_extract_pcim> algo_tmp = make_unique<vector_extract_pcim>(
-                                                                               config->iterations,
-                                                                               config->tile_size, config->v_size,
-                                                                               config->lgn, config->npc);
+                                                                                config->iterations,
+                                                                                config->tile_size, config->v_size,
+                                                                                config->lgn, config->npc);
     algo_tmp->set_custom_probability(config->custom_prob);
     algo = move(algo_tmp);
   }
@@ -234,6 +242,9 @@ unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config) {
 
   if (!config->tile_output_file.empty()) {
     algo->set_tile_to_file(config->tile_output_file);
+  }
+  if (!config->tile_output_file_async.empty()) {
+    algo->set_tile_to_file_async(config->tile_output_file_async);
   }
   if (!config->freq_output_file.empty()) {
     algo->set_freq_to_file(config->freq_output_file);

@@ -60,7 +60,6 @@ void vector_extract_pcim::vec_extract_custom_tile_creation(int index) {
   vector<int> current_other_probes(other_probes);
   vector<int> current_custom_prob (custom_prob);
 
-  cout << current_other_probes.size() << " " << current_custom_prob.size() << endl;
   for(int i=0; i<subset_size; i++) {
     auto it_probes = current_other_probes.begin();
     auto it_probab = current_custom_prob.begin();
