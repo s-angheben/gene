@@ -13,16 +13,20 @@ namespace qi = boost::spirit::qi;
 #include <algorithm_pcim.hpp>
 #include <vector_pcim.hpp>
 #include <vector_random_pcim.hpp>
+#include <vector_extract_pcim.hpp>
 
 using namespace std;
 
 
-enum Algo_type {vfds, vfsi, vri, vci};
+enum Algo_type {vfds, vfsi, vri, vci, veu, vec};
 unordered_map<string, Algo_type> alto_type_map = {
     {"vfds", vfds},
     {"vfsi", vfsi},
     {"vri", vri},
     {"vci", vci},
+    {"veu", veu},
+    {"vec", vec},
+
 };
 
 enum Gener_type {gdebug, grandom, gcustom};
@@ -146,7 +150,7 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
     }
 
 
-    if (config->algo_type == vci) {
+    if (config->algo_type == vci or config->algo_type == vec) {
       // check custom_prob sizes
       if (config->custom_prob.size() != (config->v_size - config->lgn.size())) {
         throw po::error("v_size - lgn_size != custom_prob.size()");
@@ -197,6 +201,17 @@ unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config) {
     unique_ptr<vector_random_pcim> algo_tmp = make_unique<vector_random_pcim>(config->iterations,
                                                                               config->tile_size, config->v_size,
                                                                               config->lgn, config->npc);
+    algo_tmp->set_custom_probability(config->custom_prob);
+    algo = move(algo_tmp);
+  } else if (algo_type == veu) {
+    algo = make_unique<vector_extract_pcim>(config->iterations,
+                                            config->tile_size, config->v_size,
+                                            config->lgn, config->npc);
+  } else if (algo_type == vec) {
+    unique_ptr<vector_extract_pcim> algo_tmp = make_unique<vector_extract_pcim>(
+                                                                               config->iterations,
+                                                                               config->tile_size, config->v_size,
+                                                                               config->lgn, config->npc);
     algo_tmp->set_custom_probability(config->custom_prob);
     algo = move(algo_tmp);
   }

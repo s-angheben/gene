@@ -42,15 +42,16 @@ public:
     this->data.push_back(move(_tile));
     if (this->data.size() >= size) {
       print_bulk(this->data, cout);
+
       this->data.clear();
       bulk_counter++;
     }
   }
 
   ~bulk_cout() {
-    if(bulk_counter != 0) {
-      print_bulk(this->data, cout);
-    }
+    if (this->data.size() > 0) {
+        print_bulk(this->data, cout);
+      }
   }
 };
 
@@ -83,7 +84,7 @@ public:
   }
 
   ~bulk_to_file(){
-    if (this->data.size() >= size) {
+    if (this->data.size() > 0) {
       tile_out_file.open(file_prefix + to_string(bulk_counter) + ".txt",
                          ios::out | ios::app);
       print_bulk(this->data, tile_out_file);
