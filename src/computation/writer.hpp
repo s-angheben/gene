@@ -40,12 +40,10 @@ public:
   bulk_cout (int _size) : size(_size), bulk_counter(1) {}
   void insert (unique_ptr<T1> _tile) {
     this->data.push_back(move(_tile));
-    if (bulk_counter < size) {
-      bulk_counter++;
-    } else {
+    if (this->data.size() >= size) {
       print_bulk(this->data, cout);
-      this->data.resize(0);
-      bulk_counter = 0;
+      this->data.clear();
+      bulk_counter++;
     }
   }
 
@@ -55,6 +53,45 @@ public:
     }
   }
 };
+
+
+template <ranges::common_range T1>
+class bulk_to_file : public bulk_writer<T1> {
+public:
+  ofstream tile_out_file;
+  long unsigned int bulk_counter;
+  const long unsigned int size;
+  const string file_prefix;
+
+  bulk_to_file (int _size, string _file_prefix) :
+    size(_size), file_prefix(_file_prefix)
+  {
+    bulk_counter = 1;
+  }
+
+  void insert(unique_ptr<T1> _tile) {
+    this->data.push_back(move(_tile));
+    if (this->data.size() >= size) {
+      tile_out_file.open(file_prefix + to_string(bulk_counter) + ".txt",
+                         ios::out | ios::app);
+      print_bulk(this->data, tile_out_file);
+      tile_out_file.close();
+
+      this->data.clear();
+      bulk_counter++;
+    }
+  }
+
+  ~bulk_to_file(){
+    if (this->data.size() >= size) {
+      tile_out_file.open(file_prefix + to_string(bulk_counter) + ".txt",
+                         ios::out | ios::app);
+      print_bulk(this->data, tile_out_file);
+      tile_out_file.close();
+    }
+  }
+};
+
 
 template <ranges::common_range T1>
 class bulk_to_file_async : public bulk_writer<T1> {
@@ -107,7 +144,7 @@ public:
     //   tile_out_file << endl;
     // }
 
-    out.resize(0);
+    out.clear();
     tile_out_file.close();
 
     return true;

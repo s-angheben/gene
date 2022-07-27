@@ -123,6 +123,7 @@ static void BM_ComputationVfsi(benchmark::State &state) {
 
     vector_pcim a(iteration, tile_size, size, lgn, npc);
     a.set_tile_creation_lgn_insert();
+    state.ResumeTiming();
 
     run_algo_no_output(a);
   }
@@ -145,10 +146,13 @@ static void BM_ComputationVri(benchmark::State & state) {
     }
 
     vector_random_pcim a(iteration, tile_size, size, lgn, npc);
+    state.ResumeTiming();
+
     run_algo_no_output(a);
   }
 }
 BENCHMARK(BM_ComputationVri)
 ->Apply(CustomArguments);
+
 
 BENCHMARK_MAIN();

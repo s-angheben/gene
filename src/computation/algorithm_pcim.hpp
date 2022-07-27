@@ -28,6 +28,7 @@ public:
   virtual void set_seed_cout() = 0;
 
   virtual void set_tile_to_file(string fp) = 0;
+  virtual void set_tile_to_file_async(string fp) = 0;
   virtual void set_freq_to_file(string fp) = 0;
   virtual void set_seed_to_file(string fp) = 0;
 
@@ -121,8 +122,11 @@ public:
   void set_freq_cout() { f_save_freq = &algorithm_pcim::freq_cout; }
   void set_seed_cout() { f_save_seed = &algorithm_pcim::seed_cout; }
 
-  void set_tile_to_file(string fp) {
+  void set_tile_to_file_async(string fp) {
     bulk_tile = make_unique<bulk_to_file_async<T1>>(npc, fp);
+  }
+  void set_tile_to_file(string fp) {
+    bulk_tile = make_unique<bulk_to_file<T1>>(npc, fp);
   }
 
   void set_freq_to_file(string fp) { freq_out_file.open (fp, ios::out | ios::app); f_save_freq = &algorithm_pcim::freq_to_file; }
