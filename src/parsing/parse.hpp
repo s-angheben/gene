@@ -49,10 +49,8 @@ typedef struct Algo_config {
   std::vector<int> custom_prob;
   unsigned seed;
 
-  string tile_output_file;
-  string tile_output_file_async;
-  string freq_output_file;
-  string seed_output_file;
+  bool async = false;
+  string path;
 } Algo_config;
 
 unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config);
@@ -73,16 +71,13 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
       ("generator,g", po::value<string>(&gener_string)->default_value("random"), "set generator [random(seed=clock), debug(seed=1)]")
       ("iterations,i", po::value<int>(&config->iterations)->default_value(1), "set iterations value, default set to 1")
       ("npc,n", po::value<int>(&config->npc)->required(), "specify npc")
-      ("algorithm,a", po::value<string>(&algo_string)->default_value("vfds"), "set to vector with double shuffle. [vfds vfsi vri vci]")
+      ("algorithm,a", po::value<string>(&algo_string)->default_value("vfds"), "set to vector with double shuffle. [vfds vfsi vri vci veu vec]")
       ("lgn", po::value<string>(&lgn_string)->required(), "set lgn")
       ("tile_size,t", po::value<long unsigned int>(&config->tile_size)->required(), "set tile_size")
       ("size,s", po::value<int>(&config->v_size)->required(), "set total size")
       ("seed", po::value<unsigned>(&config->seed)->default_value(0), "set seed for custom generator")
-      ("tile_out,tout", po::value<string>(&config->tile_output_file)->default_value(""), "set tile_output_file prefix")
-      ("tile_out_async,toa",  po::value<string>(&config->tile_output_file_async)->default_value(""), "set async writer")
-      ("freq_out,fout", po::value<string>(&config->freq_output_file)->default_value(""), "set freq_output_file")
-      ("seed_out,sout", po::value<string>(&config->seed_output_file)->default_value(""), "set seed_output_file")
-      ("custom_prob,c", po::value<string>(&custom_prob_string), "set custom probability for vci")
+      ("path,p", po::value<string>(&config->path)->default_value(""), "set path")
+      ("async", po::bool_switch(&config->async), "set async tile writer")
       ;
 
     po::variables_map vm;
@@ -159,10 +154,6 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
       }
     }
 
-    if (!config->tile_output_file.empty() && !config->tile_output_file_async.empty()) {
-      throw po::error("choose async writer OR normal");
-    }
-
     cout << "PARSED CONFIG: " << endl;
     cout << "algorithm: " << config->algo_type << " -> " << algo_string
          << endl;
@@ -172,6 +163,8 @@ unique_ptr<Algo_config> process_command_line(int ac, char* av[])
     cout << "tile size: " << config->tile_size << endl;
     cout << "lgn size: " << config->lgn.size() << endl;
     cout << "iterations: " << config->iterations << endl;
+    cout << "path: " << config->path << endl;
+    cout << "async writer: " << config->async << endl;
     cout << "npc: " << config->npc << endl << endl;
   }
   catch(exception& e) {
@@ -240,17 +233,14 @@ unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config) {
       break;
     }
 
-  if (!config->tile_output_file.empty()) {
-    algo->set_tile_to_file(config->tile_output_file);
-  }
-  if (!config->tile_output_file_async.empty()) {
-    algo->set_tile_to_file_async(config->tile_output_file_async);
-  }
-  if (!config->freq_output_file.empty()) {
-    algo->set_freq_to_file(config->freq_output_file);
-  }
-  if (!config->seed_output_file.empty()) {
-    algo->set_seed_to_file(config->seed_output_file);
+  if (!config->path.empty()) {
+    algo->set_freq_to_file(config->path + "/frequency.txt");
+    algo->set_seed_to_file(config->path + "/seed.txt");
+
+    if (config->async)
+      algo->set_tile_to_file_async(config->path + "/" + config->path);
+    else
+      algo->set_tile_to_file(config->path + "/" + config->path);
   }
 
   return algo;

@@ -10,6 +10,8 @@
 
 using namespace std;
 
+// string create_tile_file_name(string file_prefix, int bulk_counter);
+
 template <ranges::common_range T1>
 void print_bulk (vector<unique_ptr<T1>>& bulk, ostream& os) {
   for (auto &v : bulk) {
@@ -64,6 +66,15 @@ public:
   const long unsigned int size;
   const string file_prefix;
 
+  string create_tile_file_name() {
+    auto p1 = std::chrono::system_clock::now();
+    return file_prefix + "_" +
+           to_string(std::chrono::duration_cast<std::chrono::milliseconds>(
+                         p1.time_since_epoch())
+                         .count()) +
+           "_wu-" + to_string(bulk_counter) + "_tile.txt";
+  }
+
   bulk_to_file (int _size, string _file_prefix) :
     size(_size), file_prefix(_file_prefix)
   {
@@ -73,8 +84,8 @@ public:
   void insert(unique_ptr<T1> _tile) {
     this->data.push_back(move(_tile));
     if (this->data.size() >= size) {
-      tile_out_file.open(file_prefix + to_string(bulk_counter) + ".txt",
-                         ios::out | ios::app);
+      auto name = create_tile_file_name();
+      tile_out_file.open(name, ios::out | ios::app);
       print_bulk(this->data, tile_out_file);
       tile_out_file.close();
 
@@ -85,8 +96,8 @@ public:
 
   ~bulk_to_file(){
     if (this->data.size() > 0) {
-      tile_out_file.open(file_prefix + to_string(bulk_counter) + ".txt",
-                         ios::out | ios::app);
+      auto name = create_tile_file_name();
+      tile_out_file.open(name, ios::out | ios::app);
       print_bulk(this->data, tile_out_file);
       tile_out_file.close();
     }
@@ -106,6 +117,15 @@ public:
   const long unsigned int size;
   const string file_prefix;
 
+  string create_tile_file_name() {
+    auto p1 = std::chrono::system_clock::now();
+    return file_prefix + "_" +
+           to_string(std::chrono::duration_cast<std::chrono::milliseconds>(
+                         p1.time_since_epoch())
+                         .count()) +
+           "_wu-" + to_string(bulk_counter) + "_tile.txt";
+  }
+
   bulk_to_file_async (int _size, string _file_prefix) :
     size(_size), file_prefix(_file_prefix)
   {
@@ -121,8 +141,8 @@ public:
     this->data.push_back(move(_tile));
     if (this->data.size() >= size) {
       bool already_written = data_writing.get();
-      tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt",
-                         ios::out | ios::app);
+      auto name = create_tile_file_name();
+      tile_out_file.open(name, ios::out | ios::app);
       if(already_written) {
         out.swap(this->data);
         data_writing = async([this]() { return print_and_clear(); });
@@ -136,14 +156,6 @@ public:
       return true;
 
     print_bulk(out, tile_out_file);
-    // for (auto& v : this->out) {
-    //   if (v != nullptr) {
-    //     for (auto& elem : *v) {
-    //       tile_out_file << elem << " ";
-    //     }
-    //   }
-    //   tile_out_file << endl;
-    // }
 
     out.clear();
     tile_out_file.close();
@@ -153,8 +165,8 @@ public:
 
   ~bulk_to_file_async () {
     data_writing.get();
-    tile_out_file.open(file_prefix+to_string(bulk_counter)+".txt", ios::out |
-                       ios::app);
+    auto name = create_tile_file_name();
+    tile_out_file.open(name, ios::out | ios::app);
     out.swap(this->data);
     print_and_clear();
     if(tile_out_file.is_open()) tile_out_file.close();
