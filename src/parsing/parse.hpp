@@ -234,13 +234,17 @@ unique_ptr<algo> create_algo(unique_ptr<Algo_config>& config) {
     }
 
   if (!config->path.empty()) {
-    algo->set_freq_to_file(config->path + "/frequency.txt");
-    algo->set_seed_to_file(config->path + "/seed.txt");
+    auto path = config->path;
+    algo->set_freq_to_file(path + "/frequency.txt");
+    algo->set_seed_to_file(path + "/seed.txt");
+
+    if (path.back() == '/') path.pop_back();
+    string base_filename = path.substr(path.find_last_of("/") + 1);
 
     if (config->async)
-      algo->set_tile_to_file_async(config->path + "/" + config->path);
+      algo->set_tile_to_file_async(config->path + "/" + base_filename);
     else
-      algo->set_tile_to_file(config->path + "/" + config->path);
+      algo->set_tile_to_file(config->path + "/" + base_filename);
   }
 
   return algo;
