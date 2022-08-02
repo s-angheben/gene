@@ -5,8 +5,9 @@
 #include <ranges>
 #include <math.h>
 
-#include <vector_pcim.hpp>
 #include <algorithm_pcim.hpp>
+#include <vector_extract_pcim.hpp>
+#include <vector_pcim.hpp>
 #include <vector_random_pcim.hpp>
 
 int calculate_tile_to_do(int iteration, int tile_size, int lgn_size,
@@ -15,6 +16,18 @@ int calculate_tile_to_do(int iteration, int tile_size, int lgn_size,
   return result*iteration;
 }
 
+vector<int> create_random_vector(int size) {
+  vector<int> vec;
+
+  std::default_random_engine generator;
+  std::uniform_int_distribution<int> distribution(0, size - 1);
+
+  for (int i = 0; i < size; i++) {
+    int number = distribution(generator);
+    vec.push_back(number);
+  }
+  return vec;
+}
 
 // THESE FUNCTIONS WORKS FOR EVERY algorithm_pcim
 
@@ -217,6 +230,160 @@ TEST(tileSizeVri, BasicAssertions) {
   int npc = 10;
 
   vector_random_pcim a(iteration, tile_size, size, lgn, npc);
+
+  bool result = run_algo_check_tile_size(a, tile_size);
+
+  EXPECT_EQ(result, true);
+}
+
+////////////////////////////////////////
+////////////////// VCI
+////////////////////////////////////////
+
+TEST(lgnPresenceVci, BasicAssertions) {
+  int iteration = 2;
+  int tile_size = 8;
+  vector<int> lgn = {2, 5};
+  int size = 50;
+  int npc = 10;
+  vector<int> custom_prob = create_random_vector(size - lgn.size());
+
+  vector_random_pcim a(iteration, tile_size, size, lgn, npc);
+  a.set_custom_probability(custom_prob);
+
+  bool result = run_algo_contains(a, lgn);
+
+  EXPECT_EQ(result, true);
+}
+
+TEST(tileNumberVci, BasicAssertions) {
+  int iteration = 2;
+  int tile_size = 8;
+  vector<int> lgn = {2, 5};
+  int size = 50;
+  int npc = 10;
+  vector<int> custom_prob = create_random_vector(size - lgn.size());
+
+  vector_random_pcim a(iteration, tile_size, size, lgn, npc);
+  a.set_custom_probability(custom_prob);
+
+  int to_do = calculate_tile_to_do(iteration, tile_size, lgn.size(), size);
+  int done = run_algo_count_tile(a);
+
+  EXPECT_EQ(to_do, done);
+}
+
+TEST(tileSizeVci, BasicAssertions) {
+  int iteration = 2;
+  int tile_size = 8;
+  vector<int> lgn = {2, 5};
+  int size = 50;
+  int npc = 10;
+  vector<int> custom_prob = create_random_vector(size - lgn.size());
+
+  vector_random_pcim a(iteration, tile_size, size, lgn, npc);
+  a.set_custom_probability(custom_prob);
+
+  bool result = run_algo_check_tile_size(a, tile_size);
+
+  EXPECT_EQ(result, true);
+}
+
+////////////////////////////////////////
+////////////////// VEU
+////////////////////////////////////////
+
+TEST(lgnPresenceVeu, BasicAssertions) {
+  int iteration = 2;
+  int tile_size = 8;
+  vector<int> lgn = {2, 5};
+  int size = 50;
+  int npc = 10;
+
+  vector_extract_pcim a(iteration, tile_size, size, lgn, npc);
+
+  bool result = run_algo_contains(a, lgn);
+
+  EXPECT_EQ(result, true);
+}
+
+TEST(tileNumberVeu, BasicAssertions) {
+  int iteration = 2;
+  int tile_size = 8;
+  vector<int> lgn = {2, 5};
+  int size = 50;
+  int npc = 10;
+
+  vector_extract_pcim a(iteration, tile_size, size, lgn, npc);
+
+  int to_do = calculate_tile_to_do(iteration, tile_size, lgn.size(), size);
+  int done = run_algo_count_tile(a);
+
+  EXPECT_EQ(to_do, done);
+}
+
+TEST(tileSizeVeu, BasicAssertions) {
+  int iteration = 2;
+  int tile_size = 8;
+  vector<int> lgn = {2, 5};
+  int size = 50;
+  int npc = 10;
+
+  vector_extract_pcim a(iteration, tile_size, size, lgn, npc);
+
+  bool result = run_algo_check_tile_size(a, tile_size);
+
+  EXPECT_EQ(result, true);
+}
+
+////////////////////////////////////////
+////////////////// VEC
+////////////////////////////////////////
+
+TEST(lgnPresenceVec, BasicAssertions) {
+  int iteration = 2;
+  int tile_size = 8;
+  vector<int> lgn = {2, 5};
+  int size = 50;
+  int npc = 10;
+  vector<int> custom_prob = create_random_vector(size - lgn.size());
+
+  vector_extract_pcim a(iteration, tile_size, size, lgn, npc);
+  a.set_custom_probability(custom_prob);
+
+  bool result = run_algo_contains(a, lgn);
+
+  EXPECT_EQ(result, true);
+}
+
+TEST(tileNumberVec, BasicAssertions) {
+  int iteration = 2;
+  int tile_size = 8;
+  vector<int> lgn = {2, 5};
+  int size = 50;
+  int npc = 10;
+  vector<int> custom_prob = create_random_vector(size - lgn.size());
+
+  vector_extract_pcim a(iteration, tile_size, size, lgn, npc);
+  a.set_custom_probability(custom_prob);
+
+  int to_do = calculate_tile_to_do(iteration, tile_size, lgn.size(), size);
+  int done = run_algo_count_tile(a);
+
+  EXPECT_EQ(to_do, done);
+}
+
+TEST(tileSizeVec, BasicAssertions) {
+  int iteration = 2;
+  int tile_size = 8;
+  vector<int> lgn = {2, 5};
+  int size = 50;
+  int npc = 10;
+
+  vector<int> custom_prob = create_random_vector(size - lgn.size());
+
+  vector_extract_pcim a(iteration, tile_size, size, lgn, npc);
+  a.set_custom_probability(custom_prob);
 
   bool result = run_algo_check_tile_size(a, tile_size);
 

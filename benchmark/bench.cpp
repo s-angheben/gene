@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <algorithm_pcim.hpp>
+#include <vector_extract_pcim.hpp>
 #include <vector_pcim.hpp>
 #include <vector_random_pcim.hpp>
 
@@ -29,11 +30,11 @@ void run_algo_no_output(algorithm_pcim<T1, T2> &a) {
   }
 }
 
-vector<int> create_lgn_vector(int size) {
+vector<int> create_random_vector(int size) {
   vector<int> lgn;
 
   std::default_random_engine generator;
-  std::uniform_int_distribution<int> distribution(0,9);
+  std::uniform_int_distribution<int> distribution(0,size-1);
 
   for (int i=0; i<size; i++) {
     int number = distribution(generator);
@@ -84,13 +85,15 @@ static void CustomArguments(benchmark::internal::Benchmark * b) {
 ////////////// BENCHMARK
 
 // tile_size is important?
+
+// VFDS
 static void BM_ComputationVfds(benchmark::State & state) {
   for (auto _ : state) {
     state.PauseTiming();
     int iteration = 3;
     long unsigned int size = state.range(0);
     long unsigned int tile_size = state.range(1);
-    vector<int> lgn = create_lgn_vector(state.range(2));
+    vector<int> lgn = create_random_vector(state.range(2));
     int npc = 10;
 
     if (tile_size >= size || lgn.size() >= tile_size) {
@@ -107,13 +110,14 @@ static void BM_ComputationVfds(benchmark::State & state) {
 BENCHMARK(BM_ComputationVfds)
 ->Apply(CustomArguments);
 
+// VFSI
 static void BM_ComputationVfsi(benchmark::State &state) {
   for (auto _ : state) {
     state.PauseTiming();
     int iteration = 3;
     long unsigned int size = state.range(0);
     long unsigned int tile_size = state.range(1);
-    vector<int> lgn = create_lgn_vector(state.range(2));
+    vector<int> lgn = create_random_vector(state.range(2));
     int npc = 10;
 
     if (tile_size >= size || lgn.size() >= tile_size) {
@@ -131,13 +135,14 @@ static void BM_ComputationVfsi(benchmark::State &state) {
 BENCHMARK(BM_ComputationVfsi)
 ->Apply(CustomArguments);
 
+// VRI
 static void BM_ComputationVri(benchmark::State & state) {
   for (auto _ : state) {
     state.PauseTiming();
     int iteration = 3;
     long unsigned int size = state.range(0);
     long unsigned int tile_size = state.range(1);
-    vector<int> lgn = create_lgn_vector(state.range(2));
+    vector<int> lgn = create_random_vector(state.range(2));
     int npc = 10;
 
     if (tile_size >= size || lgn.size() >= tile_size) {
@@ -154,5 +159,77 @@ static void BM_ComputationVri(benchmark::State & state) {
 BENCHMARK(BM_ComputationVri)
 ->Apply(CustomArguments);
 
+// VCI
+static void BM_ComputationVci(benchmark::State &state) {
+  for (auto _ : state) {
+    state.PauseTiming();
+    int iteration = 3;
+    long unsigned int size = state.range(0);
+    long unsigned int tile_size = state.range(1);
+    vector<int> lgn = create_random_vector(state.range(2));
+    vector<int> custom_prob = create_random_vector(size-lgn.size());
+    int npc = 10;
+
+    if (tile_size >= size || lgn.size() >= tile_size) {
+      state.SkipWithError("invalid parameters!");
+      continue;
+    }
+
+    vector_random_pcim a(iteration, tile_size, size, lgn, npc);
+    a.set_custom_probability(custom_prob);
+    state.ResumeTiming();
+
+    run_algo_no_output(a);
+  }
+}
+BENCHMARK(BM_ComputationVci)->Apply(CustomArguments);
+
+// VEU
+static void BM_ComputationVeu(benchmark::State &state) {
+  for (auto _ : state) {
+    state.PauseTiming();
+    int iteration = 3;
+    long unsigned int size = state.range(0);
+    long unsigned int tile_size = state.range(1);
+    vector<int> lgn = create_random_vector(state.range(2));
+    int npc = 10;
+
+    if (tile_size >= size || lgn.size() >= tile_size) {
+      state.SkipWithError("invalid parameters!");
+      continue;
+    }
+
+    vector_extract_pcim a(iteration, tile_size, size, lgn, npc);
+    state.ResumeTiming();
+
+    run_algo_no_output(a);
+  }
+}
+BENCHMARK(BM_ComputationVeu)->Apply(CustomArguments);
+
+// VEC
+static void BM_ComputationVec(benchmark::State &state) {
+  for (auto _ : state) {
+    state.PauseTiming();
+    int iteration = 3;
+    long unsigned int size = state.range(0);
+    long unsigned int tile_size = state.range(1);
+    vector<int> lgn = create_random_vector(state.range(2));
+    vector<int> custom_prob = create_random_vector(size - lgn.size());
+    int npc = 10;
+
+    if (tile_size >= size || lgn.size() >= tile_size) {
+      state.SkipWithError("invalid parameters!");
+      continue;
+    }
+
+    vector_extract_pcim a(iteration, tile_size, size, lgn, npc);
+    a.set_custom_probability(custom_prob);
+    state.ResumeTiming();
+
+    run_algo_no_output(a);
+  }
+}
+BENCHMARK(BM_ComputationVec)->Apply(CustomArguments);
 
 BENCHMARK_MAIN();
