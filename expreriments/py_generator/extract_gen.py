@@ -1,4 +1,6 @@
 from random import shuffle
+import time
+import json
 
 def simple_pcim (iterations, tile_size, lgn, nProbes, lgnProbes, num_pc_wu):
     subsetSize = tile_size - len(lgnProbes)
@@ -11,16 +13,12 @@ def simple_pcim (iterations, tile_size, lgn, nProbes, lgnProbes, num_pc_wu):
     final_lst = []
 
     for i in range(iterations):
-        print()
-        print("ITERATION ", i)
-        print()
 
         shuffle(otherProbes)
         probeBag = list(otherProbes) # probes not in the LGN to be extracted
 
         while probeBag != []:
             if (len(lst_lst) % num_pc_wu == 0) and lst_lst:
-                final_lst.append("a");
                 lst_lst = []
                 work_unit += 1
 
@@ -42,21 +40,32 @@ def simple_pcim (iterations, tile_size, lgn, nProbes, lgnProbes, num_pc_wu):
             subset = subset + lgnProbes # adds the LGN to the subset
             shuffle(subset)
 #            lst_lst.append(subsetToString(subset))
-            print(subset)
 
-        print("FREQUENCIES:")
-        print(counter)
         counter = dict()
 
 def main():
-    iter = 2
-    lgn = [22, 33]
+    iter = 3
+    lgn = [22]
     lgn_size = len(lgn)
-    tile_size = 30
-    v_size = 40000
-              # (iterations, tile_size, lgn, nProbes, lgnProbes, num_pc_wu)
-#    simple_pcim (2, 5, 3, 30, [1,2,3], 1)
-    simple_pcim (iter, tile_size, lgn_size, v_size, lgn, 1)
+
+    data = {"benchmark" : []}
+
+    v_size = 100
+    while (v_size < 150000):
+        tile_size = int(float(v_size)/100.0*5.0)
+
+        start_time = time.time_ns()
+        simple_pcim (iter, tile_size, lgn_size, v_size, lgn, 1)
+        end_time = time.time_ns()
+
+        delta_time = end_time - start_time
+        data["benchmark"].append({"size" : v_size, "time" : delta_time})
+        # print("size:", v_size, "time:", delta_time)
+        v_size += 10000
+
+    print(data)
+    with open('data.json', 'w') as f:
+        json.dump(data, f)
 
 if __name__ == "__main__":
     main()
