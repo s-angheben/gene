@@ -11,6 +11,11 @@ target_link_libraries(bench_writer algorithm_pcim vector_pcim vector_random_pcim
 target_link_directories(bench_writer PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
 target_include_directories(bench_writer PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
 
+add_executable(bench_computation bench_complexity.cpp)
+target_link_libraries(bench_computation benchmark::benchmark)
+target_link_libraries(bench_computation algorithm_pcim vector_pcim vector_random_pcim vector_extract_pcim)
+target_link_directories(bench_computation PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+target_include_directories(bench_computation PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
 
 add_executable(bench_size__lgn1_ts_5 bench_size__lgn1_ts_5.cpp)
 target_link_libraries(bench_size__lgn1_ts_5 benchmark::benchmark)

@@ -19,7 +19,7 @@ add_subdirectory(src)
 #find_package( Boost REQUIRED COMPONENTS program_options regex aaa)
 include_directories( ${Boost_INCLUDE_DIRS} )
 
-option(ENABLE_TEST "Turn on to enable tests" ON)
+option(ENABLE_TEST "Turn on to enable tests" OFF)
 if (ENABLE_TEST)
     include(FetchContent)
     FetchContent_Declare(

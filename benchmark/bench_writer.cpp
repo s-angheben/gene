@@ -23,9 +23,9 @@ static void BM_Writer(benchmark::State &state) {
     int npc = 600;
 
     vector_random_pcim a(iteration, tile_size, size, lgn, npc);
-    a.set_tile_to_file("/mnt/ramdisk/out");
-    a.set_freq_to_file("/mnt/ramdisk/freq.txt");
-    a.set_seed_to_file("/mnt/ramdisk/seed.txt");
+    a.set_tile_to_file("/tmp/bench_out");
+    a.set_freq_to_file("/tmp/bench_freq.txt");
+    a.set_seed_to_file("/tmp/bench_seed.txt");
     state.ResumeTiming();
 
     a.run();
@@ -43,9 +43,9 @@ static void BM_Writer_async(benchmark::State &state) {
     int npc = 600;
 
     vector_random_pcim a(iteration, tile_size, size, lgn, npc);
-    a.set_tile_to_file_async("/mnt/ramdisk/out_async");
-    a.set_freq_to_file("/mnt/ramdisk/freq_async.txt");
-    a.set_seed_to_file("/mnt/ramdisk/seed_async.txt");
+    a.set_tile_to_file_async("/tmp/bench_out_async");
+    a.set_freq_to_file("/tmp/bench_freq_async.txt");
+    a.set_seed_to_file("/tmp/bench_seed_async.txt");
     state.ResumeTiming();
 
     a.run();
