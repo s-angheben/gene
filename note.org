@@ -1,0 +1,9 @@
+TODO:
+ - add concepts constrains on frequency
+ - config file
+
+
+con vri e vci alcuni indici si possono sovrapporre
+
+
+

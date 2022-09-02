@@ -1,0 +1,36 @@
+add_executable(bench_algo bench.cpp)
+target_link_libraries(bench_algo benchmark::benchmark)
+target_link_libraries(bench_algo algorithm_pcim vector_pcim vector_random_pcim vector_extract_pcim)
+target_link_directories(bench_algo PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+target_include_directories(bench_algo PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+
+
+add_executable(bench_writer bench_writer.cpp)
+target_link_libraries(bench_writer benchmark::benchmark)
+target_link_libraries(bench_writer algorithm_pcim vector_pcim vector_random_pcim vector_extract_pcim)
+target_link_directories(bench_writer PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+target_include_directories(bench_writer PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+
+add_executable(bench_computation bench_complexity.cpp)
+target_link_libraries(bench_computation benchmark::benchmark)
+target_link_libraries(bench_computation algorithm_pcim vector_pcim vector_random_pcim vector_extract_pcim)
+target_link_directories(bench_computation PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+target_include_directories(bench_computation PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+
+add_executable(bench_size__lgn1_ts_5 bench_size__lgn1_ts_5.cpp)
+target_link_libraries(bench_size__lgn1_ts_5 benchmark::benchmark)
+target_link_libraries(bench_size__lgn1_ts_5 algorithm_pcim vector_pcim vector_random_pcim vector_extract_pcim)
+target_link_directories(bench_size__lgn1_ts_5 PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+target_include_directories(bench_size__lgn1_ts_5 PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+
+add_executable(bench_lgn_size bench_lgn_size.cpp)
+target_link_libraries(bench_lgn_size benchmark::benchmark)
+target_link_libraries(bench_lgn_size algorithm_pcim vector_pcim vector_random_pcim vector_extract_pcim)
+target_link_directories(bench_lgn_size PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+target_include_directories(bench_lgn_size PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+
+add_executable(bench_lgn_size_single_tile bench_lgn_size_single_tile.cpp)
+target_link_libraries(bench_lgn_size_single_tile benchmark::benchmark)
+target_link_libraries(bench_lgn_size_single_tile algorithm_pcim vector_pcim vector_random_pcim vector_extract_pcim)
+target_link_directories(bench_lgn_size_single_tile PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")
+target_include_directories(bench_lgn_size_single_tile PUBLIC "${PROJECT_SOURCE_DIR}/src/computation")

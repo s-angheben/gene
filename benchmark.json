@@ -1,0 +1,68 @@
+{
+  "context": {
+    "date": "2022-08-22T16:37:01+02:00",
+    "host_name": "bad",
+    "executable": "./build/benchmark/bench_writer",
+    "num_cpus": 16,
+    "mhz_per_cpu": 2805,
+    "cpu_scaling_enabled": false,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 65536,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 524288,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 8388608,
+        "num_sharing": 8
+      }
+    ],
+    "load_avg": [0.25,0.18,0.14],
+    "library_build_type": "release"
+  },
+  "benchmarks": [
+    {
+      "name": "BM_Writer",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "BM_Writer",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.7474647825998547e+10,
+      "cpu_time": 1.7463546329999996e+10,
+      "time_unit": "ns"
+    },
+    {
+      "name": "BM_Writer_async",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "BM_Writer_async",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 1,
+      "real_time": 1.3321806394000305e+10,
+      "cpu_time": 4.4203834350000019e+09,
+      "time_unit": "ns"
+    }
+  ]
+}
